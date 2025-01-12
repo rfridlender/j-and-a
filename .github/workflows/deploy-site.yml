@@ -1,0 +1,65 @@
+name: "Deploy Site"
+on:
+  push:
+    branches: [prod, staging, dev]
+    paths: [site/**]
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  deploy_site:
+    name: "Deploy Site"
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name == 'prod' && 'prod' || github.ref_name == 'staging' && 'staging' || 'dev' }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: site/
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ vars.AWS_REGION }}
+          role-to-assume: ${{ vars.IAM_GITHUB_OIDC_ROLE_ARN }}
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_wrapper: false
+      - name: Check Terraform Format
+        run: terraform fmt -check
+      - name: Generate terraform.tfvars File
+        run: |
+          cat <<EOF > terraform.tfvars
+          aws_region        = "${{ vars.AWS_REGION }}"
+          aws_ses_email     = "${{ vars.AWS_SES_EMAIL }}"
+          aws_ses_email_arn = "${{ vars.AWS_SES_EMAIL_ARN }}"
+          environment       = "${{ vars.ENVIRONMENT }}"
+          project_name      = "${{ vars.PROJECT_NAME }}"
+          EOF
+      - name: Export Terraform Outputs
+        id: terraform_outputs
+        run: |
+          terraform output -json > outputs.json
+          echo "::set-output name=CLOUDFRONT_DISTRIBUTION_ID::$(jq -r '.cloudfront_distribution_id.value' outputs.json)"
+          echo "::set-output name=S3_BUCKET_NAME::$(jq -r '.s3_bucket_name.value' outputs.json)"
+          echo "::set-output name=VITE_USER_POOL_ID::$(jq -r '.vite_user_pool_id.value' outputs.json)"
+          echo "::set-output name=VITE_USER_POOL_CLIENT_ID::$(jq -r '.vite_user_pool_client_id.value' outputs.json)"
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Clean Install Dependencies
+        run: npm clean-install
+      - name: Build
+        env:
+          VITE_USER_POOL_ID: ${{ steps.terraform_outputs.outputs.VITE_USER_POOL_ID }}
+          VITE_USER_POOL_CLIENT_ID: ${{ steps.terraform_outputs.outputs.VITE_USER_POOL_CLIENT_ID }}
+        run: npm run build
+      - name: Sync Bucket
+        run: aws s3 sync dist/ s3://${{ steps.terraform_outputs.outputs.S3_BUCKET_NAME }}/ --delete
+      - name: Create Invalidation
+        run: aws cloudfront create-invalidation --distribution-id ${{ steps.terraform_outputs.outputs.CLOUDFRONT_DISTRIBUTION_ID }} --paths /*
