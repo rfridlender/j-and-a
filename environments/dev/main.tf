@@ -57,4 +57,3 @@ module "user_pool" {
   passwordless      = true
   project_name      = var.project_name
 }
-
