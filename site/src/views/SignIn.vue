@@ -75,6 +75,7 @@ const onSubmit = handleSubmit(async (values) => {
 
         // console.log("signInOutput", JSON.stringify(signInOutput, null, 2))
 
+
         const confirmSignInOutput = await confirmSignIn({
             challengeResponse: "20734226", // or 'EMAIL_OTP', 'WEB_AUTHN', 'PASSWORD', 'PASSWORD_SRP'
         })

@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Try this
+      - name: Configure Git Credentials
         run: git config --global url."https://${{ vars.FINE_GRAINED_GITHUB_TOKEN }}@github.com".insteadOf "https://github.com"
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -41,7 +41,7 @@ jobs:
           aws_ses_email_arn         = "${{ vars.AWS_SES_EMAIL_ARN }}"
           environment               = "${{ vars.ENVIRONMENT }}"
           fine_grained_github_token = "${{ vars.FINE_GRAINED_GITHUB_TOKEN }}"
-          github_account_name       = "${{ github.event.repository.owner }}"
+          github_account_name       = "${{ github.event.repository.owner.login }}"
           project_name              = "${{ vars.PROJECT_NAME }}"
           EOF
       - name: Initialize Terraform
@@ -50,6 +50,7 @@ jobs:
         id: terraform_outputs
         run: |
           terraform output -json > outputs.json
+          cat outputs.json
           echo "CLOUDFRONT_DISTRIBUTION_ID=$(jq -r '.cloudfront_distribution_id.value' outputs.json)" >> $GITHUB_OUTPUT
           echo "SITE_S3_BUCKET_NAME=$(jq -r '.site_s3_bucket_name.value' outputs.json)" >> $GITHUB_OUTPUT
           echo "VITE_USER_POOL_ID=$(jq -r '.vite_user_pool_id.value' outputs.json)" >> $GITHUB_OUTPUT
