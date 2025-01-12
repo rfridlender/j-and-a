@@ -45,6 +45,7 @@ jobs:
           project_name              = "${{ vars.PROJECT_NAME }}"
           EOF
       - name: Initialize Terraform
+        working-directory: environments/${{ github.ref_name }}/
         run: terraform init -input=false
       - name: Export Terraform Outputs
         id: terraform-outputs
