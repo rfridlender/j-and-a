@@ -1,11 +1,12 @@
 resource "github_actions_environment_variable" "environment_variables" {
   for_each = {
-    "AWS_REGION"               = var.aws_region
-    "AWS_SES_EMAIL"            = var.aws_ses_email
-    "AWS_SES_EMAIL_ARN"        = var.aws_ses_email_arn
-    "ENVIRONMENT"              = var.environment
-    "IAM_GITHUB_OIDC_ROLE_ARN" = module.iam_github_oidc_role.arn
-    "PROJECT_NAME"             = var.project_name
+    "AWS_REGION"                = var.aws_region
+    "AWS_SES_EMAIL"             = var.aws_ses_email
+    "AWS_SES_EMAIL_ARN"         = var.aws_ses_email_arn
+    "ENVIRONMENT"               = var.environment
+    "FINE_GRAINED_GITHUB_TOKEN" = var.fine_grained_github_token
+    "IAM_GITHUB_OIDC_ROLE_ARN"  = module.iam_github_oidc_role.arn
+    "PROJECT_NAME"              = var.project_name
   }
 
   repository    = var.project_name
@@ -31,6 +32,11 @@ variable "aws_ses_email_arn" {
 
 variable "environment" {
   description = "Environment"
+  type        = string
+}
+
+variable "fine_grained_github_token" {
+  description = "Fine-grained GitHub token"
   type        = string
 }
 

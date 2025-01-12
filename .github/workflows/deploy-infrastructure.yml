@@ -34,12 +34,13 @@ jobs:
       - name: Generate terraform.tfvars File
         run: |
           cat <<EOF > terraform.tfvars
-          aws_region          = "${{ vars.AWS_REGION }}"
-          aws_ses_email       = "${{ vars.AWS_SES_EMAIL }}"
-          aws_ses_email_arn   = "${{ vars.AWS_SES_EMAIL_ARN }}"
-          environment         = "${{ vars.ENVIRONMENT }}"
-          github_account_name = "${{ github.event.repository.owner }}"
-          project_name        = "${{ vars.PROJECT_NAME }}"
+          aws_region                = "${{ vars.AWS_REGION }}"
+          aws_ses_email             = "${{ vars.AWS_SES_EMAIL }}"
+          aws_ses_email_arn         = "${{ vars.AWS_SES_EMAIL_ARN }}"
+          environment               = "${{ vars.ENVIRONMENT }}"
+          fine_grained_github_token = "${{ vars.FINE_GRAINED_GITHUB_TOKEN }}"
+          github_account_name       = "${{ github.event.repository.owner }}"
+          project_name              = "${{ vars.PROJECT_NAME }}"
           EOF
       - name: Initialize Terraform
         run: terraform init -input=false

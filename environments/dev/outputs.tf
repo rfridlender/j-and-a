@@ -3,9 +3,9 @@ output "cloudfront_distribution_id" {
   description = "CloudFront distribution ID"
 }
 
-output "s3_bucket_name" {
-  value       = module.cdn.s3_bucket_name
-  description = "S3 bucket name"
+output "site_s3_bucket_name" {
+  value       = module.cdn.site_s3_bucket_name
+  description = "Site S3 bucket name"
 }
 
 output "vite_user_pool_id" {

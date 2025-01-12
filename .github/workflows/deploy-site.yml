@@ -34,19 +34,20 @@ jobs:
       - name: Generate terraform.tfvars File
         run: |
           cat <<EOF > terraform.tfvars
-          aws_region        = "${{ vars.AWS_REGION }}"
-          aws_ses_email     = "${{ vars.AWS_SES_EMAIL }}"
-          aws_ses_email_arn = "${{ vars.AWS_SES_EMAIL_ARN }}"
-          environment       = "${{ vars.ENVIRONMENT }}"
-          github_account_name = "${{ github.event.repository.owner }}"
-          project_name      = "${{ vars.PROJECT_NAME }}"
+          aws_region                = "${{ vars.AWS_REGION }}"
+          aws_ses_email             = "${{ vars.AWS_SES_EMAIL }}"
+          aws_ses_email_arn         = "${{ vars.AWS_SES_EMAIL_ARN }}"
+          environment               = "${{ vars.ENVIRONMENT }}"
+          fine_grained_github_token = "${{ vars.FINE_GRAINED_GITHUB_TOKEN }}"
+          github_account_name       = "${{ github.event.repository.owner }}"
+          project_name              = "${{ vars.PROJECT_NAME }}"
           EOF
       - name: Export Terraform Outputs
         id: terraform_outputs
         run: |
           terraform output -json > outputs.json
           echo "::set-output name=CLOUDFRONT_DISTRIBUTION_ID::$(jq -r '.cloudfront_distribution_id.value' outputs.json)"
-          echo "::set-output name=S3_BUCKET_NAME::$(jq -r '.s3_bucket_name.value' outputs.json)"
+          echo "::set-output name=SITE_S3_BUCKET_NAME::$(jq -r '.site_s3_bucket_name.value' outputs.json)"
           echo "::set-output name=VITE_USER_POOL_ID::$(jq -r '.vite_user_pool_id.value' outputs.json)"
           echo "::set-output name=VITE_USER_POOL_CLIENT_ID::$(jq -r '.vite_user_pool_client_id.value' outputs.json)"
       - name: Setup Node
@@ -61,6 +62,6 @@ jobs:
           VITE_USER_POOL_CLIENT_ID: ${{ steps.terraform_outputs.outputs.VITE_USER_POOL_CLIENT_ID }}
         run: npm run build
       - name: Sync Bucket
-        run: aws s3 sync dist/ s3://${{ steps.terraform_outputs.outputs.S3_BUCKET_NAME }}/ --delete
+        run: aws s3 sync dist/ s3://${{ steps.terraform_outputs.outputs.SITE_S3_BUCKET_NAME }}/ --delete
       - name: Create Invalidation
         run: aws cloudfront create-invalidation --distribution-id ${{ steps.terraform_outputs.outputs.CLOUDFRONT_DISTRIBUTION_ID }} --paths /*
