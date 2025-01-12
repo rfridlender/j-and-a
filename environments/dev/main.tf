@@ -16,10 +16,6 @@ provider "aws" {
   region = var.aws_region
 }
 
-provider "github" {
-  token = var.fine_grained_github_token
-}
-
 resource "github_repository_environment" "repository_environment" {
   repository  = var.project_name
   environment = var.environment
@@ -41,7 +37,7 @@ module "iam_github_oidc_role" {
 }
 
 module "cdn" {
-  source = "git::https://${var.fine_grained_github_token}@github.com/rfridlender/terraform-modules.git//cdn?ref=main"
+  source = "git::https://github.com/rfridlender/terraform-modules.git//cdn?ref=main"
 
   environment   = var.environment
   force_destroy = true
@@ -49,7 +45,7 @@ module "cdn" {
 }
 
 module "user_pool" {
-  source = "git::https://${var.fine_grained_github_token}@github.com/rfridlender/terraform-modules.git//user-pool?ref=main"
+  source = "git::https://github.com/rfridlender/terraform-modules.git//user-pool?ref=main"
 
   aws_ses_email     = var.aws_ses_email
   aws_ses_email_arn = var.aws_ses_email_arn
