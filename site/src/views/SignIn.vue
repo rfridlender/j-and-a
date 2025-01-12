@@ -65,22 +65,21 @@ const onSubmit = handleSubmit(async (values) => {
 
         // console.log("confirmSignUpOutput", JSON.stringify(confirmSignUpOutput, null, 2))
 
-        // const signInOutput = await signIn({
-        //     username: values.email,
-        //     options: {
-        //         authFlowType: "USER_AUTH",
-        //         // preferredChallenge: "EMAIL_OTP",
-        //     },
-        // })
-
-        // console.log("signInOutput", JSON.stringify(signInOutput, null, 2))
-
-
-        const confirmSignInOutput = await confirmSignIn({
-            challengeResponse: "20734226", // or 'EMAIL_OTP', 'WEB_AUTHN', 'PASSWORD', 'PASSWORD_SRP'
+        const signInOutput = await signIn({
+            username: values.email,
+            options: {
+                authFlowType: "USER_AUTH",
+                preferredChallenge: "EMAIL_OTP",
+            },
         })
 
-        console.log("confirmSignInOutput", JSON.stringify(confirmSignInOutput, null, 2))
+        console.log("signInOutput", JSON.stringify(signInOutput, null, 2))
+
+        // const confirmSignInOutput = await confirmSignIn({
+        //     challengeResponse: "20734226", // or 'EMAIL_OTP', 'WEB_AUTHN', 'PASSWORD', 'PASSWORD_SRP'
+        // })
+
+        // console.log("confirmSignInOutput", JSON.stringify(confirmSignInOutput, null, 2))
 
         // if (signInOutput.nextStep.signInStep === "CONFIRM_SIGN_IN_WITH_EMAIL_CODE") {
         //     router.push("/confirm-sign-in-with-email-code")
