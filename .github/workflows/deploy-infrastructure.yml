@@ -6,8 +6,6 @@ on:
 permissions:
   contents: read
   id-token: write
-env:
-  GITHUB_TOKEN: ${{ vars.FINE_GRAINED_GITHUB_TOKEN }}
 jobs:
   deploy_environment_infrastructure:
     name: "Deploy Environment Infrastructure"
@@ -46,5 +44,9 @@ jobs:
           EOF
       - name: Initialize Terraform
         run: terraform init -input=false
+        env:
+          GITHUB_TOKEN: ${{ vars.FINE_GRAINED_GITHUB_TOKEN }}
       - name: Apply Terraform Infrastructure
         run: terraform apply -input=false -auto-approve
+        env:
+          GITHUB_TOKEN: ${{ vars.FINE_GRAINED_GITHUB_TOKEN }}
