@@ -111,6 +111,7 @@ format() {
     echo -e "${BLUE}Running formatter...${NC}"
     terraform fmt -recursive
     yamlfmt -dstar **/*.yml
+    cd $SITE_DIRECTORY_NAME && npm run format
 }
 
 output() {
