@@ -16,6 +16,10 @@ provider "aws" {
   region = var.aws_region
 }
 
+provider "github" {
+  token = var.fine_grained_github_token
+}
+
 resource "github_repository_environment" "repository_environment" {
   repository  = var.project_name
   environment = var.environment
