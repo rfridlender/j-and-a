@@ -46,10 +46,10 @@ jobs:
         id: terraform_outputs
         run: |
           terraform output -json > outputs.json
-          echo "::set-output name=CLOUDFRONT_DISTRIBUTION_ID::$(jq -r '.cloudfront_distribution_id.value' outputs.json)"
-          echo "::set-output name=SITE_S3_BUCKET_NAME::$(jq -r '.site_s3_bucket_name.value' outputs.json)"
-          echo "::set-output name=VITE_USER_POOL_ID::$(jq -r '.vite_user_pool_id.value' outputs.json)"
-          echo "::set-output name=VITE_USER_POOL_CLIENT_ID::$(jq -r '.vite_user_pool_client_id.value' outputs.json)"
+          echo "CLOUDFRONT_DISTRIBUTION_ID=$(jq -r '.cloudfront_distribution_id.value' outputs.json)" >> $GITHUB_OUTPUT
+          echo "SITE_S3_BUCKET_NAME=$(jq -r '.site_s3_bucket_name.value' outputs.json)" >> $GITHUB_OUTPUT
+          echo "VITE_USER_POOL_ID=$(jq -r '.vite_user_pool_id.value' outputs.json)" >> $GITHUB_OUTPUT
+          echo "VITE_USER_POOL_CLIENT_ID=$(jq -r '.vite_user_pool_client_id.value' outputs.json)" >> $GITHUB_OUTPUT
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
