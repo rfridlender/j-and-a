@@ -38,10 +38,9 @@ jobs:
           cat <<EOF > terraform.tfvars
           aws_region                = "${{ vars.AWS_REGION }}"
           aws_ses_email             = "${{ vars.AWS_SES_EMAIL }}"
-          aws_ses_email_arn         = "${{ vars.AWS_SES_EMAIL_ARN }}"
           environment               = "${{ vars.ENVIRONMENT }}"
           fine_grained_github_token = "${{ vars.FINE_GRAINED_GITHUB_TOKEN }}"
-          github_account_name       = "${{ github.event.repository.owner.login }}"
+          repository_full_name      = "${{ github.repository }}"
           project_name              = "${{ vars.PROJECT_NAME }}"
           EOF
       - name: Initialize Terraform
