@@ -39,6 +39,7 @@ module "iam_github_oidc_role" {
     AmazonCognitoPowerUser   = "arn:aws:iam::aws:policy/AmazonCognitoPowerUser"
     AmazonDynamoDBFullAccess = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
     AmazonS3FullAccess       = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+    AmazonSESFullAccess      = "arn:aws:iam::aws:policy/AmazonSESFullAccess"
     CloudFrontFullAccess     = "arn:aws:iam::aws:policy/CloudFrontFullAccess"
     IAMFullAccess            = "arn:aws:iam::aws:policy/IAMFullAccess"
   }
