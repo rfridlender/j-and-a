@@ -77,7 +77,7 @@ const data = {
     user: {
         name: `${userAttributes?.given_name} ${userAttributes?.family_name}`,
         email: userAttributes?.email,
-        avatar: `https://api.dicebear.com/9.x/adventurer/svg?seed=${encodeURIComponent(userAttributes?.given_name)}`,
+        avatar: `https://api.dicebear.com/9.x/adventurer/svg?seed=${encodeURIComponent(userAttributes?.given_name || "")}`,
     },
     teams: [
         {
