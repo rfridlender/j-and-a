@@ -1,4 +1,3 @@
-import type { AuthSession } from "aws-amplify/auth"
 import { defineStore } from "pinia"
 
 type AuthSessionState = {
