@@ -2,6 +2,8 @@ import PrivateLayout from "@/layouts/PrivateLayout.vue"
 import PublicLayout from "@/layouts/PublicLayout.vue"
 import { useAuthSession } from "@/stores/authSession"
 import { useUserAttributes } from "@/stores/userAttributes"
+import ConfirmSignInWithEmailCode from "@/views/ConfirmSignInWithEmailCode.vue"
+import DashboardView from "@/views/DashboardView.vue"
 import SignIn from "@/views/SignIn.vue"
 
 import { fetchAuthSession, fetchUserAttributes } from "aws-amplify/auth"
@@ -14,13 +16,18 @@ const publicRoutes = [
         name: "sign-in",
         component: SignIn,
     },
+    {
+        path: "/confirm-sign-in-with-email-code",
+        name: "confirm-sign-in-with-email-code",
+        component: ConfirmSignInWithEmailCode,
+    },
 ]
 
 const privateRoutes = [
     {
         path: "/dashboard",
         name: "dashboard",
-        component: SignIn,
+        component: DashboardView,
     },
 ]
 
