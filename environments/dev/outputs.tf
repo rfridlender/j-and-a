@@ -8,6 +8,11 @@ output "cloudfront_distribution_id" {
   description = "CloudFront distribution ID"
 }
 
+output "cloudfront_distribution_domain_name" {
+  value       = module.cdn.cloudfront_distribution_domain_name
+  description = "CloudFront distribution domain name"
+}
+
 output "site_s3_bucket_name" {
   value       = module.cdn.site_s3_bucket_name
   description = "Site S3 bucket name"
