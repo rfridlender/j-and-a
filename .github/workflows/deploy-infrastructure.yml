@@ -2,7 +2,7 @@ name: "Deploy Environment Infrastructure"
 on:
   push:
     branches: [prod, staging, dev]
-    paths: [environments/**]
+    paths: [cmd/**, environments/**, internal/**, pkg/**]
 permissions:
   contents: read
   id-token: write

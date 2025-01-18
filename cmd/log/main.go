@@ -37,20 +37,20 @@ func init() {
 }
 
 func handler(ctx context.Context, request events.APIGatewayV2HTTPRequest) (*events.APIGatewayV2HTTPResponse, error) {
-    if request.IsBase64Encoded {
-        decodedRequestBody, err := base64.StdEncoding.DecodeString(request.Body)
-        if err != nil {
-            log.Fatal(err)
-        }
-        request.Body = string(decodedRequestBody)
-    }
+	if request.IsBase64Encoded {
+		decodedRequestBody, err := base64.StdEncoding.DecodeString(request.Body)
+		if err != nil {
+			log.Fatal(err)
+		}
+		request.Body = string(decodedRequestBody)
+	}
 
-    jsonRequest, err := json.Marshal(request)
-    if err != nil {
-        log.Fatal(err)
-    }
+	jsonRequest, err := json.Marshal(request)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-    log.Printf("request %s", string(jsonRequest))
+	log.Printf("request %s", string(jsonRequest))
 
 	ctx = context.WithValue(ctx, "requestedBy", request.RequestContext.Authorizer.JWT.Claims["sub"])
 
@@ -76,8 +76,8 @@ func handler(ctx context.Context, request events.APIGatewayV2HTTPRequest) (*even
 		if err != nil {
 			break
 		}
-        newRequest.JobId = request.PathParameters["jobId"]
-        newRequest.LogId = request.PathParameters["logId"]
+		newRequest.JobId = request.PathParameters["jobId"]
+		newRequest.LogId = request.PathParameters["logId"]
 		err = service.PutLog(ctx, newRequest)
 	case "DELETE /jobs/{jobId}/logs/{logId}":
 		jobId := request.PathParameters["jobId"]
