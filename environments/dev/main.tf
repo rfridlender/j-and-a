@@ -179,3 +179,4 @@ module "function_log" {
     DYNAMO_DB_INDEX_NAME = local.dynamodb_index_name
   }
 }
+
