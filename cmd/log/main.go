@@ -61,6 +61,8 @@ func handler(ctx context.Context, request events.APIGatewayV2HTTPRequest) (*even
 		if err != nil {
 			break
 		}
+        newRequest.JobId = request.PathParameters["jobId"]
+        newRequest.LogId = request.PathParameters["logId"]
 		err = service.PutLog(ctx, newRequest)
 	case "DELETE /jobs/{jobId}/logs/{logId}":
 		jobId := request.PathParameters["jobId"]
