@@ -36,6 +36,13 @@ func init() {
 }
 
 func handler(ctx context.Context, request events.APIGatewayV2HTTPRequest) (*events.APIGatewayV2HTTPResponse, error) {
+    jsonRequest, err := json.MarshalIndent(request, "", "  ")
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    log.Printf("request %s", string(jsonRequest))
+
 	ctx = context.WithValue(ctx, "requestedBy", request.RequestContext.Authorizer.JWT.Claims["sub"])
 
 	repository := &repositories.LogRepository{
@@ -47,7 +54,6 @@ func handler(ctx context.Context, request events.APIGatewayV2HTTPRequest) (*even
 	service := &services.LogService{Repository: repository}
 
 	var data interface{}
-	var err error
 	switch request.RouteKey {
 	case "GET /jobs/{jobId}/logs":
 		data, err = service.GetAllLogs(ctx)

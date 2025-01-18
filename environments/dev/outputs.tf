@@ -8,9 +8,9 @@ output "cloudfront_distribution_id" {
   description = "CloudFront distribution ID"
 }
 
-output "cloudfront_distribution_domain_name" {
-  value       = module.cdn.cloudfront_distribution_domain_name
-  description = "CloudFront distribution domain name"
+output "cloudfront_distribution_url" {
+  value       = "https://${module.cdn.cloudfront_distribution_domain_name}"
+  description = "CloudFront distribution URL"
 }
 
 output "site_s3_bucket_name" {
