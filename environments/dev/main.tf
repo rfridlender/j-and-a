@@ -36,12 +36,14 @@ module "iam_github_oidc_role" {
   subjects = ["${data.github_repository.repository.full_name}:*"]
 
   policies = {
-    AmazonCognitoPowerUser   = "arn:aws:iam::aws:policy/AmazonCognitoPowerUser"
-    AmazonDynamoDBFullAccess = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
-    AmazonS3FullAccess       = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
-    AmazonSESFullAccess      = "arn:aws:iam::aws:policy/AmazonSESFullAccess"
-    CloudFrontFullAccess     = "arn:aws:iam::aws:policy/CloudFrontFullAccess"
-    IAMFullAccess            = "arn:aws:iam::aws:policy/IAMFullAccess"
+    AmazonAPIGatewayAdministrator = "arn:aws:iam::aws:policy/AmazonAPIGatewayAdministrator"
+    AmazonCognitoPowerUser        = "arn:aws:iam::aws:policy/AmazonCognitoPowerUser"
+    AmazonDynamoDBFullAccess      = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
+    AmazonS3FullAccess            = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+    AmazonSESFullAccess           = "arn:aws:iam::aws:policy/AmazonSESFullAccess"
+    CloudFrontFullAccess          = "arn:aws:iam::aws:policy/CloudFrontFullAccess"
+    CloudWatchFullAccessV2        = "arn:aws:iam::aws:policy/CloudWatchFullAccessV2"
+    IAMFullAccess                 = "arn:aws:iam::aws:policy/IAMFullAccess"
   }
 }
 
