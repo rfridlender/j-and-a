@@ -54,35 +54,32 @@ func handler(ctx context.Context, request events.APIGatewayV2HTTPRequest) (*even
 
 	ctx = context.WithValue(ctx, "requestedBy", request.RequestContext.Authorizer.JWT.Claims["sub"])
 
-	repository := &repositories.LogRepository{
+	repository := &repositories.PersonRepository{
 		Client:    client,
 		TableName: tableName,
 		IndexName: indexName,
 	}
 
-	service := &services.LogService{Repository: repository}
+	service := &services.PersonService{Repository: repository}
 
 	var data any
 	switch request.RouteKey {
-	case "GET /jobs/{jobId}/logs":
-		data, err = service.GetAllLogs(ctx)
-	case "GET /jobs/{jobId}/logs/{logId}":
-		jobId := request.PathParameters["jobId"]
-		logId := request.PathParameters["logId"]
-		data, err = service.GetLog(ctx, jobId, logId)
-	case "PUT /jobs/{jobId}/logs/{logId}":
-		newRequest := new(models.LogRequest)
+	case "GET /persons":
+		data, err = service.GetAllPersons(ctx)
+	case "GET /persons/{personId}":
+		personId := request.PathParameters["personId"]
+		data, err = service.GetPerson(ctx, personId)
+	case "PUT /persons/{personId}":
+		newRequest := new(models.PersonRequest)
 		err = json.Unmarshal([]byte(request.Body), newRequest)
 		if err != nil {
 			break
 		}
-		newRequest.JobId = request.PathParameters["jobId"]
-		newRequest.LogId = request.PathParameters["logId"]
-		err = service.PutLog(ctx, newRequest)
-	case "DELETE /jobs/{jobId}/logs/{logId}":
-		jobId := request.PathParameters["jobId"]
-		logId := request.PathParameters["logId"]
-		err = service.DeleteLog(ctx, jobId, logId)
+		newRequest.PersonId = request.PathParameters["personId"]
+		err = service.PutPerson(ctx, newRequest)
+	case "DELETE /persons/{personId}":
+		personId := request.PathParameters["personId"]
+		err = service.DeletePerson(ctx, personId)
 	default:
 		err = errors.New("unsupported request.RouteKey")
 	}

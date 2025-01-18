@@ -8,10 +8,10 @@ const LOG_PARTITION_TYPE = "JOB"
 const LOG_SORT_TYPE = "LOG"
 
 type LogRequest struct {
-	PersonId string
-	Hours    int
-	JobId    string
-	LogId    string
+	PersonId string `json:"personId"`
+	Hours    int    `json:"hours"`
+	JobId    string `json:"jobId"`
+	LogId    string `json:"logId"`
 }
 
 func (r *LogRequest) ToItem(version int, latestVersion int, createdAt string, createdBy string) *LogItem {
@@ -52,6 +52,7 @@ func (i *LogItem) ToData() (*LogData, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return &LogData{
 		PersonId:  i.PersonId,
 		Hours:     i.Hours,
@@ -65,12 +66,12 @@ func (i *LogItem) ToData() (*LogData, error) {
 }
 
 type LogData struct {
-	PersonId  string
-	Hours     int
-	JobId     string
-	LogId     string
-	CreatedAt string
-	CreatedBy string
-	DeletedAt string
-	DeletedBy string
+	PersonId  string `json:"personId"`
+	Hours     int    `json:"Hours"`
+	JobId     string `json:"jobId"`
+	LogId     string `json:"logId"`
+	CreatedAt string `json:"createdAt"`
+	CreatedBy string `json:"createdBy"`
+	DeletedAt string `json:"deletedAt"`
+	DeletedBy string `json:"deletedBy"`
 }

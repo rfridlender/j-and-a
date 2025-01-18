@@ -1,0 +1,28 @@
+@API_ENDPOINT = {{$dotenv API_ENDPOINT}}
+@ID_TOKEN = {{$dotenv ID_TOKEN}}
+@personId = 01902e98-2fa0-7e52-a13b-7ac25c53ff00
+
+### GET /persons
+
+GET {{API_ENDPOINT}}/persons
+Authorization: Bearer {{ID_TOKEN}}
+
+### GET /persons/{personId}
+
+GET {{API_ENDPOINT}}/persons/{{personId}}
+Authorization: Bearer {{ID_TOKEN}}
+
+### PUT /persons/{personId}
+
+PUT {{API_ENDPOINT}}/persons/{{personId}}
+Authorization: Bearer {{ID_TOKEN}}
+
+{
+	"givenName": "Jose",
+	"familyName": "Ramirez"
+}
+
+### DELETE /persons/{personId}
+
+DELETE {{API_ENDPOINT}}/persons/{{personId}}
+Authorization: Bearer {{ID_TOKEN}}

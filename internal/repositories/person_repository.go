@@ -15,18 +15,18 @@ import (
 	utils "j-and-a/pkg"
 )
 
-type LogRepository struct {
+type PersonRepository struct {
 	Client    *dynamodb.Client
 	TableName string
 	IndexName string
 }
 
-func (r *LogRepository) Delete(ctx context.Context, partitionId string, sortId string) error {
+func (r *PersonRepository) Delete(ctx context.Context, partitionId string, sortId string) error {
 	getItemOutput, err := r.Client.GetItem(ctx, &dynamodb.GetItemInput{
 		TableName: aws.String(r.TableName),
 		Key: map[string]types.AttributeValue{
-			"PK": &types.AttributeValueMemberS{Value: utils.EncodePartitionKey(models.LOG_PARTITION_TYPE, partitionId)},
-			"SK": &types.AttributeValueMemberS{Value: utils.EncodeSortKey(0, models.LOG_SORT_TYPE, sortId)},
+			"PK": &types.AttributeValueMemberS{Value: utils.EncodePartitionKey(models.PERSON_PARTITION_TYPE, partitionId)},
+			"SK": &types.AttributeValueMemberS{Value: utils.EncodeSortKey(0, models.PERSON_SORT_TYPE, sortId)},
 		},
 	})
 	if err != nil {
@@ -52,8 +52,8 @@ func (r *LogRepository) Delete(ctx context.Context, partitionId string, sortId s
 			{Update: &types.Update{
 				TableName: &r.TableName,
 				Key: map[string]types.AttributeValue{
-					"PK": &types.AttributeValueMemberS{Value: utils.EncodePartitionKey(models.LOG_PARTITION_TYPE, partitionId)},
-					"SK": &types.AttributeValueMemberS{Value: utils.EncodeSortKey(0, models.LOG_SORT_TYPE, sortId)},
+					"PK": &types.AttributeValueMemberS{Value: utils.EncodePartitionKey(models.PERSON_PARTITION_TYPE, partitionId)},
+					"SK": &types.AttributeValueMemberS{Value: utils.EncodeSortKey(0, models.PERSON_SORT_TYPE, sortId)},
 				},
 				UpdateExpression: aws.String("SET DeletedAt = :DeletedAt, DeletedBy = :DeletedBy"),
 				ExpressionAttributeValues: map[string]types.AttributeValue{
@@ -65,8 +65,8 @@ func (r *LogRepository) Delete(ctx context.Context, partitionId string, sortId s
 			{Update: &types.Update{
 				TableName: &r.TableName,
 				Key: map[string]types.AttributeValue{
-					"PK": &types.AttributeValueMemberS{Value: utils.EncodePartitionKey(models.LOG_PARTITION_TYPE, partitionId)},
-					"SK": &types.AttributeValueMemberS{Value: utils.EncodeSortKey(latestVersion, models.LOG_SORT_TYPE, sortId)},
+					"PK": &types.AttributeValueMemberS{Value: utils.EncodePartitionKey(models.PERSON_PARTITION_TYPE, partitionId)},
+					"SK": &types.AttributeValueMemberS{Value: utils.EncodeSortKey(latestVersion, models.PERSON_SORT_TYPE, sortId)},
 				},
 				UpdateExpression: aws.String("SET DeletedAt = :DeletedAt, DeletedBy = :DeletedBy"),
 				ExpressionAttributeValues: map[string]types.AttributeValue{
@@ -81,23 +81,23 @@ func (r *LogRepository) Delete(ctx context.Context, partitionId string, sortId s
 	return err
 }
 
-func (r *LogRepository) GetAll(ctx context.Context) ([]models.LogData, error) {
+func (r *PersonRepository) GetAll(ctx context.Context) ([]models.PersonData, error) {
 	queryOutput, err := r.Client.Query(ctx, &dynamodb.QueryInput{
 		TableName:              aws.String(r.TableName),
 		IndexName:              aws.String(r.IndexName),
 		KeyConditionExpression: aws.String("EntityType = :EntityType AND begins_with(SK, :SK)"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
-			":EntityType": &types.AttributeValueMemberS{Value: models.LOG_SORT_TYPE},
-			":SK":         &types.AttributeValueMemberS{Value: fmt.Sprintf("%s%d#%s#", utils.SORT_KEY_VERSION_PREFIX, 0, models.LOG_SORT_TYPE)},
+			":EntityType": &types.AttributeValueMemberS{Value: models.PERSON_SORT_TYPE},
+			":SK":         &types.AttributeValueMemberS{Value: fmt.Sprintf("%s%d#%s#", utils.SORT_KEY_VERSION_PREFIX, 0, models.PERSON_SORT_TYPE)},
 		},
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	datas := make([]models.LogData, queryOutput.Count)
+	datas := make([]models.PersonData, queryOutput.Count)
 	for idx, queryOutputItem := range queryOutput.Items {
-		item := new(models.LogItem)
+		item := new(models.PersonItem)
 		err = attributevalue.UnmarshalMap(queryOutputItem, item)
 		if err != nil {
 			return nil, err
@@ -114,12 +114,12 @@ func (r *LogRepository) GetAll(ctx context.Context) ([]models.LogData, error) {
 	return datas, nil
 }
 
-func (r *LogRepository) Get(ctx context.Context, partitionId string, sortId string) (*models.LogData, error) {
+func (r *PersonRepository) Get(ctx context.Context, partitionId string, sortId string) (*models.PersonData, error) {
 	getItemOutput, err := r.Client.GetItem(ctx, &dynamodb.GetItemInput{
 		TableName: aws.String(r.TableName),
 		Key: map[string]types.AttributeValue{
-			"PK": &types.AttributeValueMemberS{Value: utils.EncodePartitionKey(models.LOG_PARTITION_TYPE, partitionId)},
-			"SK": &types.AttributeValueMemberS{Value: utils.EncodeSortKey(0, models.LOG_SORT_TYPE, sortId)},
+			"PK": &types.AttributeValueMemberS{Value: utils.EncodePartitionKey(models.PERSON_PARTITION_TYPE, partitionId)},
+			"SK": &types.AttributeValueMemberS{Value: utils.EncodeSortKey(0, models.PERSON_SORT_TYPE, sortId)},
 		},
 	})
 	if err != nil {
@@ -130,7 +130,7 @@ func (r *LogRepository) Get(ctx context.Context, partitionId string, sortId stri
 		return nil, errors.New("item not found")
 	}
 
-	item := new(models.LogItem)
+	item := new(models.PersonItem)
 	err = attributevalue.UnmarshalMap(getItemOutput.Item, item)
 	if err != nil {
 		return nil, err
@@ -144,12 +144,12 @@ func (r *LogRepository) Get(ctx context.Context, partitionId string, sortId stri
 	return data, nil
 }
 
-func (r *LogRepository) Put(ctx context.Context, request *models.LogRequest) error {
+func (r *PersonRepository) Put(ctx context.Context, request *models.PersonRequest) error {
 	getItemOutput, err := r.Client.GetItem(ctx, &dynamodb.GetItemInput{
 		TableName: aws.String(r.TableName),
 		Key: map[string]types.AttributeValue{
-			"PK": &types.AttributeValueMemberS{Value: utils.EncodePartitionKey(models.LOG_PARTITION_TYPE, request.JobId)},
-			"SK": &types.AttributeValueMemberS{Value: utils.EncodeSortKey(0, models.LOG_SORT_TYPE, request.LogId)},
+			"PK": &types.AttributeValueMemberS{Value: utils.EncodePartitionKey(models.PERSON_PARTITION_TYPE, request.PersonId)},
+			"SK": &types.AttributeValueMemberS{Value: utils.EncodeSortKey(0, models.PERSON_SORT_TYPE, request.PersonId)},
 		},
 	})
 	if err != nil {
