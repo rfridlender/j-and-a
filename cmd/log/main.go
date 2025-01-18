@@ -62,43 +62,58 @@ func handler(ctx context.Context, request events.APIGatewayV2HTTPRequest) (*even
 
 	service := &services.LogService{Repository: repository}
 
-	var data interface{}
+	var data any
 	switch request.RouteKey {
 	case "GET /jobs/{jobId}/logs":
 		data, err = service.GetAllLogs(ctx)
+		if err != nil {
+			log.Fatal(err)
+		}
 	case "GET /jobs/{jobId}/logs/{logId}":
 		jobId := request.PathParameters["jobId"]
 		logId := request.PathParameters["logId"]
 		data, err = service.GetLog(ctx, jobId, logId)
+		if err != nil {
+			log.Fatal(err)
+		}
 	case "PUT /jobs/{jobId}/logs/{logId}":
 		newRequest := new(models.LogRequest)
 		err = json.Unmarshal([]byte(request.Body), newRequest)
 		if err != nil {
-			break
+			log.Fatal(err)
 		}
 		newRequest.JobId = request.PathParameters["jobId"]
 		newRequest.LogId = request.PathParameters["logId"]
 		err = service.PutLog(ctx, newRequest)
+		if err != nil {
+			log.Fatal(err)
+		}
 	case "DELETE /jobs/{jobId}/logs/{logId}":
 		jobId := request.PathParameters["jobId"]
 		logId := request.PathParameters["logId"]
 		err = service.DeleteLog(ctx, jobId, logId)
+		if err != nil {
+			log.Fatal(err)
+		}
 	default:
-		err = errors.New("unsupported request.RouteKey")
-	}
-	if err != nil {
-		log.Fatal(err)
+		log.Fatal(errors.New("unsupported request.RouteKey"))
 	}
 
-	jsonData, err := json.Marshal(data)
-	if err != nil {
-		log.Fatal(err)
+	if data != nil {
+		jsonData, err := json.Marshal(data)
+		if err != nil {
+			log.Fatal(err)
+		}
+		return &events.APIGatewayV2HTTPResponse{
+			StatusCode: http.StatusOK,
+			Body:       string(jsonData),
+		}, nil
+	} else {
+		return &events.APIGatewayV2HTTPResponse{
+			StatusCode: http.StatusOK,
+		}, nil
 	}
 
-	return &events.APIGatewayV2HTTPResponse{
-		StatusCode: http.StatusOK,
-		Body:       string(jsonData),
-	}, nil
 }
 
 func main() {

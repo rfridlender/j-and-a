@@ -14,12 +14,12 @@ type LogRequest struct {
 	LogId    string
 }
 
-func (r *LogRequest) ToItem(latestVersion int, createdAt string, createdBy string) *LogItem {
+func (r *LogRequest) ToItem(version int, latestVersion int, createdAt string, createdBy string) *LogItem {
 	return &LogItem{
 		PersonId:      r.PersonId,
 		Hours:         r.Hours,
 		PK:            utils.EncodePartitionKey(LOG_PARTITION_TYPE, r.JobId),
-		SK:            utils.EncodeSortKey(latestVersion, LOG_SORT_TYPE, r.LogId),
+		SK:            utils.EncodeSortKey(version, LOG_SORT_TYPE, r.LogId),
 		EntityType:    LOG_SORT_TYPE,
 		LatestVersion: latestVersion,
 		CreatedAt:     createdAt,
@@ -35,11 +35,11 @@ type LogItem struct {
 	PK            string
 	SK            string
 	EntityType    string
-	LatestVersion int
+	LatestVersion int `dynamodbav:",omitempty"`
 	CreatedAt     string
 	CreatedBy     string
-	DeletedAt     string
-	DeletedBy     string
+	DeletedAt     string `dynamodbav:",omitempty"`
+	DeletedBy     string `dynamodbav:",omitempty"`
 }
 
 func (i *LogItem) ToData() (*LogData, error) {

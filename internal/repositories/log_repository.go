@@ -171,12 +171,12 @@ func (r *LogRepository) Put(ctx context.Context, request *models.LogRequest) err
 		return errors.New("missing requested by within context")
 	}
 
-	rootItem, err := attributevalue.MarshalMap(request.ToItem(latestVersion+1, createdAt, createdBy))
+	rootItem, err := attributevalue.MarshalMap(request.ToItem(0, latestVersion+1, createdAt, createdBy))
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	item, err := attributevalue.MarshalMap(request.ToItem(0, createdAt, createdBy))
+	item, err := attributevalue.MarshalMap(request.ToItem(latestVersion+1, 0, createdAt, createdBy))
 	if err != nil {
 		log.Fatal(err)
 	}
