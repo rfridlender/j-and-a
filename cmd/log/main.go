@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"log"
@@ -36,7 +37,15 @@ func init() {
 }
 
 func handler(ctx context.Context, request events.APIGatewayV2HTTPRequest) (*events.APIGatewayV2HTTPResponse, error) {
-    jsonRequest, err := json.MarshalIndent(request, "", "  ")
+    if request.IsBase64Encoded {
+        decodedRequestBody, err := base64.StdEncoding.DecodeString(request.Body)
+        if err != nil {
+            log.Fatal(err)
+        }
+        request.Body = string(decodedRequestBody)
+    }
+
+    jsonRequest, err := json.Marshal(request)
     if err != nil {
         log.Fatal(err)
     }
