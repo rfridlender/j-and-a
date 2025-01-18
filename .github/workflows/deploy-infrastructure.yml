@@ -20,9 +20,34 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Configure Git Credentials
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.4'
+      - name: Confirm Go version
+        run: go version
+      - name: Cache Go modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/go-build
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      - name: Install dependencies
+        run: go mod tidy
+      - name: Build Go functions
+        working-directory: cmd/
+        run: |
+          for dir in *; do
+            if [ -d $dir ]; then
+              echo "Building $(basename $dir)..."
+              GOOS=linux GOARCH=arm64 go build -tags lambda.norpc -o $dir/bootstrap $dir/main.go
+              echo "Build complete for $(basename $dir)."
+            fi
+          done
+      - name: Configure Git credentials
         run: git config --global url."https://${{ vars.FINE_GRAINED_GITHUB_TOKEN }}@github.com".insteadOf "https://github.com"
-      - name: Configure AWS Credentials
+      - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: ${{ vars.AWS_REGION }}
@@ -31,9 +56,9 @@ jobs:
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_wrapper: false
-      - name: Check Terraform Format
+      - name: Check Terraform format
         run: terraform fmt -check
-      - name: Generate terraform.tfvars File
+      - name: Generate terraform.tfvars file
         run: |
           cat <<EOF > terraform.tfvars
           aws_region                = "${{ vars.AWS_REGION }}"
@@ -45,5 +70,5 @@ jobs:
           EOF
       - name: Initialize Terraform
         run: terraform init -input=false
-      - name: Apply Terraform Infrastructure
+      - name: Apply Terraform infrastructure
         run: terraform apply -input=false -auto-approve
