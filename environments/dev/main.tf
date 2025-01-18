@@ -41,6 +41,7 @@ module "iam_github_oidc_role" {
     AmazonDynamoDBFullAccess      = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
     AmazonS3FullAccess            = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
     AmazonSESFullAccess           = "arn:aws:iam::aws:policy/AmazonSESFullAccess"
+    AWSLambda_FullAccess          = "arn:aws:iam::aws:policy/AWSLambda_FullAccess"
     CloudFrontFullAccess          = "arn:aws:iam::aws:policy/CloudFrontFullAccess"
     CloudWatchFullAccessV2        = "arn:aws:iam::aws:policy/CloudWatchFullAccessV2"
     IAMFullAccess                 = "arn:aws:iam::aws:policy/IAMFullAccess"
@@ -131,10 +132,10 @@ module "api_gateway" {
   environment  = var.environment
   project_name = var.project_name
   routes = {
-    "GET /jobs/{jobId}/logs"            = ""
-    "GET /jobs/{jobId}/logs/{logId}"    = ""
-    "PUT /jobs/{jobId}/logs/{logId}"    = ""
-    "DELETE /jobs/{jobId}/logs/{logId}" = ""
+    "GET /jobs/{jobId}/logs"            = module.function_log.lambda_function_arn
+    "GET /jobs/{jobId}/logs/{logId}"    = module.function_log.lambda_function_arn
+    "PUT /jobs/{jobId}/logs/{logId}"    = module.function_log.lambda_function_arn
+    "DELETE /jobs/{jobId}/logs/{logId}" = module.function_log.lambda_function_arn
   }
   user_pool_id         = module.user_pool.user_pool_id
   user_pool_client_ids = [module.user_pool.user_pool_client_id]
@@ -181,4 +182,3 @@ module "function_log" {
     DYNAMO_DB_INDEX_NAME = local.dynamodb_index_name
   }
 }
-
