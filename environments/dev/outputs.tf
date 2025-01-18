@@ -1,3 +1,8 @@
+output "api_endpoint" {
+  value       = module.api_gateway.api_endpoint
+  description = "API endpoint"
+}
+
 output "cloudfront_distribution_id" {
   value       = module.cdn.cloudfront_distribution_id
   description = "CloudFront distribution ID"

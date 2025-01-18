@@ -1,0 +1,29 @@
+@API_ENDPOINT = {{$dotenv API_ENDPOINT}}
+@ID_TOKEN = {{$dotenv ID_TOKEN}}
+@jobId = 01902e98-2fa0-7e52-a13b-7ac25c53ff00
+@logId = 0191e45f-fd1c-78d3-9e91-82d078d7b13a
+
+### GET /jobs/{jobId}/logs
+
+GET {{API_ENDPOINT}}/jobs/{{jobId}}/logs
+Authorization: Bearer {{ID_TOKEN}}
+
+### GET /jobs/{jobId}/logs/{logId}
+
+GET {{API_ENDPOINT}}/jobs/{{jobId}}/logs/{{logId}}
+Authorization: Bearer {{ID_TOKEN}}
+
+### PUT /jobs/{jobId}/logs/{logId}
+
+PUT {{API_ENDPOINT}}/jobs/{{jobId}}/logs/{{logId}}
+Authorization: Bearer {{ID_TOKEN}}
+
+{
+	"personId": "019476ea-a91f-78b9-b08d-b76d7f71e0c6",
+	"hours": 1
+}
+
+### DELETE /jobs/{jobId}/logs/{logId}
+
+DELETE {{API_ENDPOINT}}/jobs/{{jobId}}/logs/{{logId}}
+Authorization: Bearer {{ID_TOKEN}}
