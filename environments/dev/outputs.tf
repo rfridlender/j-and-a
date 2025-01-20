@@ -28,6 +28,11 @@ output "user_pool_client_id" {
   description = "User pool client ID"
 }
 
+output "vite_api_endpoint" {
+  value       = module.api_gateway.api_endpoint
+  description = "Vite API endpoint"
+}
+
 output "vite_user_pool_id" {
   value       = module.user_pool.vite_user_pool_id
   description = "Vite user pool ID"
