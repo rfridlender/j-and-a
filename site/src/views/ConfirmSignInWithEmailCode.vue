@@ -10,7 +10,7 @@ import { toTypedSchema } from "@vee-validate/zod"
 import { confirmSignIn, confirmSignUp, signIn, signUp } from "aws-amplify/auth"
 import { LoaderCircle, LogIn, ShieldCheck } from "lucide-vue-next"
 import { useForm } from "vee-validate"
-import { onMounted } from "vue"
+import { onMounted, ref } from "vue"
 import { useRouter } from "vue-router"
 import * as z from "zod"
 
@@ -27,16 +27,6 @@ const { handleSubmit, isSubmitting } = useForm({
     initialValues: {
         verificationCode: "",
     },
-})
-
-onMounted(() => {
-    const successMessage = router.currentRoute.value.query["success-message"]?.toString()
-    if (successMessage) {
-        toast({
-            title: "Success",
-            description: successMessage,
-        })
-    }
 })
 
 const onSubmit = handleSubmit(async (values) => {
@@ -70,6 +60,47 @@ const onSubmit = handleSubmit(async (values) => {
         }
     }
 })
+
+const isResending = ref(false)
+async function onResendVerificationCode() {
+    try {
+        isResending.value = true
+
+        const email = router.currentRoute.value.query.email?.toString()
+        if (!email) {
+            throw new Error("Your previous session has expired")
+        }
+
+        const signInOutput = await signIn({
+            username: email,
+            options: {
+                authFlowType: "USER_AUTH",
+                preferredChallenge: "EMAIL_OTP",
+            },
+        })
+
+        console.log("signInOutput", JSON.stringify(signInOutput, null, 2))
+
+        if (signInOutput.nextStep.signInStep !== "CONFIRM_SIGN_IN_WITH_EMAIL_CODE") {
+            router.push({
+                path: "/sign-in",
+                query: { "error-message": "Something went wrong" },
+            })
+        }
+    } catch (error) {
+        console.error(error)
+
+        if (error instanceof Error) {
+            toast({
+                title: error.name,
+                description: error.message,
+                variant: "destructive",
+            })
+        }
+    } finally {
+        isResending.value = false
+    }
+}
 </script>
 
 <template>
@@ -105,6 +136,12 @@ const onSubmit = handleSubmit(async (values) => {
             </Button>
 
             <div class="flex flex-col gap-2 mt-4 text-center text-sm">
+                <div class="flex justify-center items-center gap-1">
+                    <span>Didn't receive a code?</span>
+                    <span class="underline cursor-pointer" @click="onResendVerificationCode">Resend</span>
+                    <LoaderCircle v-if="isResending" class="size-4 animate-spin" />
+                </div>
+
                 <RouterLink class="underline" to="/sign-in">Back to sign in</RouterLink>
             </div>
         </CardFooter>

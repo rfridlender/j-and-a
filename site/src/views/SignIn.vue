@@ -30,11 +30,12 @@ const { handleSubmit, isSubmitting } = useForm({
 })
 
 onMounted(() => {
-    const successMessage = router.currentRoute.value.query["success-message"]?.toString()
-    if (successMessage) {
+    const errorMessage = router.currentRoute.value.query["error-message"]?.toString()
+    if (errorMessage) {
         toast({
-            title: "Success",
-            description: successMessage,
+            title: "Error",
+            description: errorMessage,
+            variant: "destructive",
         })
     }
 })
@@ -52,7 +53,10 @@ const onSubmit = handleSubmit(async (values) => {
         console.log("signInOutput", JSON.stringify(signInOutput, null, 2))
 
         if (signInOutput.nextStep.signInStep === "CONFIRM_SIGN_IN_WITH_EMAIL_CODE") {
-            router.push("/confirm-sign-in-with-email-code")
+            router.push({
+                path: "/confirm-sign-in-with-email-code",
+                query: { email: values.email },
+            })
         }
     } catch (error) {
         console.error(error)
