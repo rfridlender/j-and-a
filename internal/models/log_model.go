@@ -8,10 +8,10 @@ const LOG_PARTITION_TYPE = "JOB"
 const LOG_SORT_TYPE = "LOG"
 
 type LogRequest struct {
-	PersonId string `json:"personId"`
-	Hours    int    `json:"hours"`
-	JobId    string `json:"jobId"`
-	LogId    string `json:"logId"`
+	PersonId string  `json:"personId"`
+	Hours    float64 `json:"hours"`
+	JobId    string  `json:"jobId"`
+	LogId    string  `json:"logId"`
 }
 
 func (r *LogRequest) ToItem(version int, latestVersion int, createdAt string, createdBy string) *LogItem {
@@ -31,7 +31,7 @@ func (r *LogRequest) ToItem(version int, latestVersion int, createdAt string, cr
 
 type LogItem struct {
 	PersonId      string
-	Hours         int
+	Hours         float64
 	PK            string
 	SK            string
 	EntityType    string
@@ -66,12 +66,12 @@ func (i *LogItem) ToData() (*LogData, error) {
 }
 
 type LogData struct {
-	PersonId  string `json:"personId"`
-	Hours     int    `json:"Hours"`
-	JobId     string `json:"jobId"`
-	LogId     string `json:"logId"`
-	CreatedAt string `json:"createdAt"`
-	CreatedBy string `json:"createdBy"`
-	DeletedAt string `json:"deletedAt"`
-	DeletedBy string `json:"deletedBy"`
+	PersonId  string  `json:"personId"`
+	Hours     float64 `json:"Hours"`
+	JobId     string  `json:"jobId"`
+	LogId     string  `json:"logId"`
+	CreatedAt string  `json:"createdAt"`
+	CreatedBy string  `json:"createdBy"`
+	DeletedAt string  `json:"deletedAt"`
+	DeletedBy string  `json:"deletedBy"`
 }
