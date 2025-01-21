@@ -4,30 +4,44 @@ import { useAuthSession } from "@/stores/authSession"
 import { useUserAttributes } from "@/stores/userAttributes"
 import ConfirmSignInWithEmailCode from "@/views/ConfirmSignInWithEmailCode.vue"
 import DashboardView from "@/views/DashboardView.vue"
+import PersonView from "@/views/PersonView.vue"
 import SignIn from "@/views/SignIn.vue"
 
 import { fetchAuthSession, fetchUserAttributes } from "aws-amplify/auth"
 
-import { createRouter, createWebHistory } from "vue-router"
+import {
+    createRouter,
+    createWebHistory,
+    type NavigationGuardNext,
+    type RouteLocationNormalized,
+    type RouteLocationNormalizedLoaded,
+} from "vue-router"
 
 const publicRoutes = [
     {
         path: "/sign-in",
-        name: "sign-in",
+        name: "Sign-In",
         component: SignIn,
     },
     {
         path: "/confirm-sign-in-with-email-code",
-        name: "confirm-sign-in-with-email-code",
+        name: "Confirm Sign-In With Email Code",
         component: ConfirmSignInWithEmailCode,
+        beforeEnter: (to: RouteLocationNormalized, from: RouteLocationNormalizedLoaded, next: NavigationGuardNext) =>
+            from.path !== "/sign-in" || !to.query.email ? next(false) : next(),
     },
 ]
 
-const privateRoutes = [
+export const privateRoutes = [
     {
         path: "/dashboard",
-        name: "dashboard",
+        name: "Dashboard",
         component: DashboardView,
+    },
+    {
+        path: "/person",
+        name: "Person",
+        component: PersonView,
     },
 ]
 
