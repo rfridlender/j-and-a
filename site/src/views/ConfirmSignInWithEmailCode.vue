@@ -7,10 +7,10 @@ import { toast } from "@/components/ui/toast"
 
 import { vAutoAnimate } from "@formkit/auto-animate/vue"
 import { toTypedSchema } from "@vee-validate/zod"
-import { confirmSignIn, confirmSignUp, signIn, signUp } from "aws-amplify/auth"
-import { LoaderCircle, LogIn, ShieldCheck } from "lucide-vue-next"
+import { confirmSignIn, signIn } from "aws-amplify/auth"
+import { LoaderCircle, ShieldCheck } from "lucide-vue-next"
 import { useForm } from "vee-validate"
-import { onMounted, ref } from "vue"
+import { ref } from "vue"
 import { useRouter } from "vue-router"
 import * as z from "zod"
 

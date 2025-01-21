@@ -1,7 +1,8 @@
+import type { AuthSession } from "aws-amplify/auth"
 import { defineStore } from "pinia"
 
 type AuthSessionState = {
-    authSession?: unknown
+    authSession?: AuthSession
 }
 
 export const useAuthSession = defineStore("authSession", {
