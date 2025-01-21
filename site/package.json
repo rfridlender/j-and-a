@@ -16,9 +16,11 @@
     },
     "dependencies": {
         "@formkit/auto-animate": "^0.8.2",
+        "@tanstack/vue-table": "^8.20.5",
         "@vee-validate/zod": "^4.15.0",
         "@vueuse/core": "^12.4.0",
         "aws-amplify": "^6.11.0",
+        "axios": "^1.7.9",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "lucide-vue-next": "^0.469.0",
