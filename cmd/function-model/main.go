@@ -24,6 +24,17 @@ type APIGatewayV2HTTPErrorResponse struct {
 	Message string
 }
 
+func returnAPIGatewayV2HTTPErrorResponse(err error) (*events.APIGatewayV2HTTPResponse, error) {
+	bodyBytes, err := json.Marshal(&APIGatewayV2HTTPErrorResponse{Name: "Error", Message: err.Error()})
+	if err != nil {
+		return nil, err
+	}
+	return &events.APIGatewayV2HTTPResponse{
+		StatusCode: http.StatusBadRequest,
+		Body:       string(bodyBytes),
+	}, nil
+}
+
 var (
 	client    *dynamodb.Client
 	tableName string
@@ -45,14 +56,14 @@ func handler(ctx context.Context, request events.APIGatewayV2HTTPRequest) (*even
 	if request.IsBase64Encoded {
 		decodedRequestBody, err := base64.StdEncoding.DecodeString(request.Body)
 		if err != nil {
-			return nil, err
+			return returnAPIGatewayV2HTTPErrorResponse(err)
 		}
 		request.Body = string(decodedRequestBody)
 	}
 
 	jsonRequest, err := json.Marshal(request)
 	if err != nil {
-		return nil, err
+		return returnAPIGatewayV2HTTPErrorResponse(err)
 	}
 	log.Printf("request %s", string(jsonRequest))
 
@@ -69,7 +80,7 @@ func handler(ctx context.Context, request events.APIGatewayV2HTTPRequest) (*even
 
 	service, err := services.New(repository, modelIdentifiers)
 	if err != nil {
-		return nil, err
+		return returnAPIGatewayV2HTTPErrorResponse(err)
 	}
 
 	var data interface{}
@@ -89,14 +100,7 @@ func handler(ctx context.Context, request events.APIGatewayV2HTTPRequest) (*even
 	}
 
 	if err != nil {
-		bodyBytes, err := json.Marshal(&APIGatewayV2HTTPErrorResponse{Name: "Error", Message: err.Error()})
-		if err != nil {
-			log.Fatal(err)
-		}
-		return &events.APIGatewayV2HTTPResponse{
-			StatusCode: http.StatusBadRequest,
-			Body:       string(bodyBytes),
-		}, nil
+		return returnAPIGatewayV2HTTPErrorResponse(err)
 	}
 
 	if data != nil {
