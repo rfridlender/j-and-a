@@ -11,7 +11,7 @@ import (
 
 func NewPersonMetadataService(repository *repositories.Repository, modelIdentifiers *models.ModelIdentifiers) (Service, error) {
 	if modelIdentifiers.SortId != "" {
-		return nil, errors.New("sort ID must not be specified")
+		return nil, errors.New("invalid path parameter; sort ID must not be specified")
 	}
 
 	if modelIdentifiers.PartitionId != "" && modelIdentifiers.PartitionType != models.ModelTypePerson {

@@ -19,6 +19,11 @@ import (
 	"j-and-a/internal/services"
 )
 
+type APIGatewayV2HTTPErrorResponse struct {
+	Name    string
+	Message string
+}
+
 var (
 	client    *dynamodb.Client
 	tableName string
@@ -80,21 +85,28 @@ func handler(ctx context.Context, request events.APIGatewayV2HTTPRequest) (*even
 	case "PUT /{PartitionType}/{PartitionId}/{SortType}", "PUT /{PartitionType}/{PartitionId}/{SortType}/{SortId}":
 		err = service.PutByPartitionIdAndSortId(ctx, request.Body)
 	default:
-		err = errors.New("unsupported request.RouteKey")
+		err = errors.New("unsupported service action")
 	}
 
 	if err != nil {
-		log.Fatal(err)
+		bodyBytes, err := json.Marshal(&APIGatewayV2HTTPErrorResponse{Name: "Error", Message: err.Error()})
+		if err != nil {
+			log.Fatal(err)
+		}
+		return &events.APIGatewayV2HTTPResponse{
+			StatusCode: http.StatusBadRequest,
+			Body:       string(bodyBytes),
+		}, nil
 	}
 
 	if data != nil {
-		jsonData, err := json.Marshal(data)
+		bodyBytes, err := json.Marshal(data)
 		if err != nil {
 			log.Fatal(err)
 		}
 		return &events.APIGatewayV2HTTPResponse{
 			StatusCode: http.StatusOK,
-			Body:       string(jsonData),
+			Body:       string(bodyBytes),
 		}, nil
 	} else {
 		return &events.APIGatewayV2HTTPResponse{
