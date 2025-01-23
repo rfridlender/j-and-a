@@ -34,7 +34,7 @@ type PersonMetadataItem struct {
 }
 
 func (i *PersonMetadataItem) Data() (ModelData, error) {
-	_, personId, err := DecodePartitionKey(i.PK)
+	_, partitionId, err := DecodePartitionKey(i.PK)
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +42,7 @@ func (i *PersonMetadataItem) Data() (ModelData, error) {
 	return &PersonMetadataData{
 		GivenName:  i.GivenName,
 		FamilyName: i.FamilyName,
-		PersonId:   personId,
+		PersonId:   partitionId,
 		CreatedAt:  i.CreatedAt,
 		CreatedBy:  i.CreatedBy,
 		DeletedAt:  i.DeletedAt,

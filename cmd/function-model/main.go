@@ -20,8 +20,8 @@ import (
 )
 
 type APIGatewayV2HTTPErrorResponse struct {
-	Name    string
-	Message string
+	Name    string `json:"name"`
+	Message string `json:"message"`
 }
 
 func returnAPIGatewayV2HTTPErrorResponse(err error) (*events.APIGatewayV2HTTPResponse, error) {

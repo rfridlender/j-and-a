@@ -49,11 +49,11 @@ func (s *PersonMetadataService) GetBySortType(ctx context.Context) ([]models.Mod
 }
 
 func (s *PersonMetadataService) PutByPartitionIdAndSortId(ctx context.Context, requestBody string) error {
-	personMetadataPayload := new(models.PersonMetadataPayload)
-	err := json.Unmarshal([]byte(requestBody), personMetadataPayload)
+	modelPayload := new(models.PersonMetadataPayload)
+	err := json.Unmarshal([]byte(requestBody), modelPayload)
 	if err != nil {
 		return err
 	}
 	s.ModelIdentifiers.SortId = s.ModelIdentifiers.PartitionId
-	return s.Repository.PutByPartitionIdAndSortId(ctx, s.ModelIdentifiers, personMetadataPayload)
+	return s.Repository.PutByPartitionIdAndSortId(ctx, s.ModelIdentifiers, modelPayload)
 }
