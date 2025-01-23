@@ -40,46 +40,45 @@ func handler(ctx context.Context, request events.APIGatewayV2HTTPRequest) (*even
 	if request.IsBase64Encoded {
 		decodedRequestBody, err := base64.StdEncoding.DecodeString(request.Body)
 		if err != nil {
-			log.Fatal(err)
+			return nil, err
 		}
 		request.Body = string(decodedRequestBody)
 	}
 
 	jsonRequest, err := json.Marshal(request)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
-
 	log.Printf("request %s", string(jsonRequest))
 
 	ctx = context.WithValue(ctx, "requestedBy", request.RequestContext.Authorizer.JWT.Claims["sub"])
 
-	repository := &repositories.PersonRepository{
-		Client:    client,
-		TableName: tableName,
-		IndexName: indexName,
+	repository := &repositories.Repository{Client: client, TableName: tableName, IndexName: indexName}
+
+	modelIdentifiers := &models.ModelIdentifiers{
+		PartitionType: models.ModelType(request.PathParameters["PartitionType"]),
+		PartitionId:   request.PathParameters["PartitionId"],
+		SortType:      models.ModelType(request.PathParameters["SortType"]),
+		SortId:        request.PathParameters["SortId"],
 	}
 
-	service := &services.PersonService{Repository: repository}
+	service, err := services.New(repository, modelIdentifiers)
+	if err != nil {
+		return nil, err
+	}
 
-	var data any
+	var data interface{}
 	switch request.RouteKey {
-	case "GET /persons":
-		data, err = service.GetAllPersons(ctx)
-	case "GET /persons/{personId}":
-		personId := request.PathParameters["personId"]
-		data, err = service.GetPerson(ctx, personId)
-	case "PUT /persons/{personId}":
-		newRequest := new(models.PersonRequest)
-		err = json.Unmarshal([]byte(request.Body), newRequest)
-		if err != nil {
-			break
-		}
-		newRequest.PersonId = request.PathParameters["personId"]
-		err = service.PutPerson(ctx, newRequest)
-	case "DELETE /persons/{personId}":
-		personId := request.PathParameters["personId"]
-		err = service.DeletePerson(ctx, personId)
+	case "DELETE /{PartitionType}/{PartitionId}/{SortType}", "DELETE /{PartitionType}/{PartitionId}/{SortType}/{SortId}":
+		err = service.DeleteByPartitionIdAndSortId(ctx)
+	case "GET /{PartitionType}/{PartitionId}/{SortType}":
+		data, err = service.GetByPartitionId(ctx)
+	case "GET /{PartitionType}/{PartitionId}/{SortType}/{SortId}":
+		data, err = service.GetByPartitionIdAndSortId(ctx)
+	case "GET /{SortType}":
+		data, err = service.GetBySortType(ctx)
+	case "PUT /{PartitionType}/{PartitionId}/{SortType}", "PUT /{PartitionType}/{PartitionId}/{SortType}/{SortId}":
+		err = service.PutByPartitionIdAndSortId(ctx, request.Body)
 	default:
 		err = errors.New("unsupported request.RouteKey")
 	}

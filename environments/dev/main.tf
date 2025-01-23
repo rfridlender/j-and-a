@@ -132,15 +132,13 @@ module "api_gateway" {
   environment  = var.environment
   project_name = var.project_name
   routes = {
-    "GET /jobs/{jobId}/logs"            = module.function_log.lambda_function_arn
-    "GET /jobs/{jobId}/logs/{logId}"    = module.function_log.lambda_function_arn
-    "PUT /jobs/{jobId}/logs/{logId}"    = module.function_log.lambda_function_arn
-    "DELETE /jobs/{jobId}/logs/{logId}" = module.function_log.lambda_function_arn
-
-    "GET /persons"               = module.function_person.lambda_function_arn
-    "GET /persons/{personId}"    = module.function_person.lambda_function_arn
-    "PUT /persons/{personId}"    = module.function_person.lambda_function_arn
-    "DELETE /persons/{personId}" = module.function_person.lambda_function_arn
+    "DELETE /{PartitionType}/{PartitionId}/{SortType}"          = module.function_model.lambda_function_arn
+    "DELETE /{PartitionType}/{PartitionId}/{SortType}/{SortId}" = module.function_model.lambda_function_arn
+    "GET /{PartitionType}/{PartitionId}/{SortType}"             = module.function_model.lambda_function_arn
+    "GET /{PartitionType}/{PartitionId}/{SortType}/{SortId}"    = module.function_model.lambda_function_arn
+    "GET /{SortType}"                                           = module.function_model.lambda_function_arn
+    "PUT /{PartitionType}/{PartitionId}/{SortType}"             = module.function_model.lambda_function_arn
+    "PUT /{PartitionType}/{PartitionId}/{SortType}/{SortId}"    = module.function_model.lambda_function_arn
   }
   user_pool_id         = module.user_pool.user_pool_id
   user_pool_client_ids = [module.user_pool.user_pool_client_id]
@@ -158,46 +156,16 @@ module "function_iam_policy" {
   )
 }
 
-module "function_log" {
+module "function_model" {
   source = "terraform-aws-modules/lambda/aws"
 
-  function_name = "${var.project_name}-${var.environment}-function-log"
+  function_name = "${var.project_name}-${var.environment}-function-model"
   runtime       = "provided.al2023"
   handler       = "bootstrap"
   architectures = ["arm64"]
   publish       = true
 
-  source_path = "../../cmd/log/bootstrap"
-
-  store_on_s3 = true
-  s3_bucket   = module.artifact_store.s3_bucket_id
-
-  allowed_triggers = {
-    api_gateway = {
-      service    = "apigateway"
-      source_arn = "${module.api_gateway.stage_execution_arn}/*/*"
-    }
-  }
-
-  attach_policy = true
-  policy        = module.function_iam_policy.arn
-
-  environment_variables = {
-    DYNAMO_DB_TABLE_NAME = module.dynamodb_table.dynamodb_table_id
-    DYNAMO_DB_INDEX_NAME = local.dynamodb_index_name
-  }
-}
-
-module "function_person" {
-  source = "terraform-aws-modules/lambda/aws"
-
-  function_name = "${var.project_name}-${var.environment}-function-person"
-  runtime       = "provided.al2023"
-  handler       = "bootstrap"
-  architectures = ["arm64"]
-  publish       = true
-
-  source_path = "../../cmd/person/bootstrap"
+  source_path = "../../cmd/function-model/bootstrap"
 
   store_on_s3 = true
   s3_bucket   = module.artifact_store.s3_bucket_id
