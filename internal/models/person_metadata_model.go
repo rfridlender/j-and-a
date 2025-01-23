@@ -1,8 +1,8 @@
 package models
 
 type PersonMetadataPayload struct {
-	GivenName  string
-	FamilyName string
+	GivenName  string `json:"givenName"`
+	FamilyName string `json:"familyName"`
 }
 
 func (p *PersonMetadataPayload) Item(modelIdentifiers *ModelIdentifiers, version int, latestVersion int, createdAt string, createdBy string) ModelItem {
@@ -51,11 +51,11 @@ func (i *PersonMetadataItem) Data() (ModelData, error) {
 }
 
 type PersonMetadataData struct {
-	GivenName  string
-	FamilyName string
-	PersonId   string
-	CreatedAt  string
-	CreatedBy  string
-	DeletedAt  string
-	DeletedBy  string
+	GivenName  string `json:"givenName"`
+	FamilyName string `json:"familyName"`
+	PersonId   string `json:"personId"`
+	CreatedAt  string `json:"createdAt"`
+	CreatedBy  string `json:"createdBy"`
+	DeletedAt  string `json:"deletedAt"`
+	DeletedBy  string `json:"deletedBy"`
 }
