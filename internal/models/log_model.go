@@ -9,7 +9,7 @@ func (p *LogPayload) Item(modelIdentifiers *ModelIdentifiers, version int, lates
 	return &LogItem{
 		PersonId:      p.PersonId,
 		Hours:         p.Hours,
-		PK:            EncodePartitionKey(ModelTypePerson, modelIdentifiers.PartitionId),
+		PK:            EncodePartitionKey(ModelTypeJob, modelIdentifiers.PartitionId),
 		SK:            EncodeSortKey(version, ModelTypeLog, modelIdentifiers.SortId),
 		ModelType:     ModelTypeLog,
 		LatestVersion: latestVersion,

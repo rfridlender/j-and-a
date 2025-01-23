@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -25,10 +26,19 @@ type APIGatewayV2HTTPErrorResponse struct {
 }
 
 func returnAPIGatewayV2HTTPErrorResponse(err error) (*events.APIGatewayV2HTTPResponse, error) {
-	bodyBytes, err := json.Marshal(&APIGatewayV2HTTPErrorResponse{Name: "Error", Message: err.Error()})
+	log.Println(err)
+
+	originalMessage := err.Error()
+	if len(originalMessage) < 2 {
+		originalMessage = "something went wrong"
+	}
+    message := strings.ToUpper(originalMessage[:1]) + originalMessage[1:]
+
+	bodyBytes, err := json.Marshal(&APIGatewayV2HTTPErrorResponse{Name: "Error", Message: message})
 	if err != nil {
 		return nil, err
 	}
+
 	return &events.APIGatewayV2HTTPResponse{
 		StatusCode: http.StatusBadRequest,
 		Body:       string(bodyBytes),
