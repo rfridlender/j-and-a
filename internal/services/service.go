@@ -10,6 +10,8 @@ import (
 
 func New(repository *repositories.Repository, modelIdentifiers *models.ModelIdentifiers) (Service, error) {
 	switch modelIdentifiers.SortType {
+	case models.ModelTypeLog:
+		return NewLogService(repository, modelIdentifiers)
 	case models.ModelTypePersonMetadata:
 		return NewPersonMetadataService(repository, modelIdentifiers)
 	default:

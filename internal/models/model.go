@@ -15,6 +15,8 @@ const SORT_KEY_VERSION_PREFIX = "V"
 type ModelType string
 
 const (
+	ModelTypeJob            = "Job"
+	ModelTypeLog            = "Log"
 	ModelTypePerson         = "Person"
 	ModelTypePersonMetadata = "PersonMetadata"
 )
