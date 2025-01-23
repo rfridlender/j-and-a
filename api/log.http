@@ -2,14 +2,9 @@
 @ID_TOKEN = {{$dotenv ID_TOKEN}}
 
 @PartitionType = Job
-@PartitionId = 01902e98-2fa0-7e52-a13b-7ac25c53ff00
+@PartitionId = 019491f6-4888-75ba-9816-7d8be3e16610
 @SortType = Log
-@SortId = 01902e98-2fa0-7e52-a13b-7ac25c53ff00
-
-### DELETE /{PartitionType}/{PartitionId}/{SortType}
-
-DELETE {{API_ENDPOINT}}/{{PartitionType}}/{{PartitionId}}/{{SortType}}
-Authorization: Bearer {{ID_TOKEN}}
+@SortId = 019491f6-70bb-7cdd-8b1c-27bc09720fe4
 
 ### DELETE /{PartitionType}/{PartitionId}/{SortType}/{SortId}
 
@@ -30,16 +25,6 @@ Authorization: Bearer {{ID_TOKEN}}
 
 GET {{API_ENDPOINT}}/{{SortType}}
 Authorization: Bearer {{ID_TOKEN}}
-
-### PUT /{PartitionType}/{PartitionId}/{SortType}
-
-PUT {{API_ENDPOINT}}/{{PartitionType}}/{{PartitionId}}/{{SortType}}
-Authorization: Bearer {{ID_TOKEN}}
-
-{
-	"personId": "019491b4-4d1f-7df2-be95-62e0e684353f",
-	"hours": 1.25
-}
 
 ### PUT /{PartitionType}/{PartitionId}/{SortType}/{SortId}
 

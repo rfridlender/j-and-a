@@ -85,8 +85,8 @@ func (r *Repository) GetByPartitionId(ctx context.Context, modelIdentifiers *mod
 		TableName:              aws.String(r.TableName),
 		KeyConditionExpression: aws.String("PK = :PK AND begins_with(SK, :SK)"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
-			"PK": &types.AttributeValueMemberS{Value: models.EncodePartitionKey(modelIdentifiers.PartitionType, modelIdentifiers.PartitionId)},
-			"SK": &types.AttributeValueMemberS{Value: models.EncodeAnonymousSortKey(0, modelIdentifiers.SortType)},
+			":PK": &types.AttributeValueMemberS{Value: models.EncodePartitionKey(modelIdentifiers.PartitionType, modelIdentifiers.PartitionId)},
+			":SK": &types.AttributeValueMemberS{Value: models.EncodeAnonymousSortKey(0, modelIdentifiers.SortType)},
 		},
 	})
 	if err != nil {

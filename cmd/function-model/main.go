@@ -32,7 +32,7 @@ func returnAPIGatewayV2HTTPErrorResponse(err error) (*events.APIGatewayV2HTTPRes
 	if len(originalMessage) < 2 {
 		originalMessage = "something went wrong"
 	}
-    message := strings.ToUpper(originalMessage[:1]) + originalMessage[1:]
+	message := strings.ToUpper(originalMessage[:1]) + originalMessage[1:]
 
 	bodyBytes, err := json.Marshal(&APIGatewayV2HTTPErrorResponse{Name: "Error", Message: message})
 	if err != nil {
