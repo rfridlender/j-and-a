@@ -187,7 +187,7 @@ user-create() {
     echo $tokens \
         | jq -r '.AuthenticationResult | to_entries[] | select(.key | endswith("Token")) | "\(.key | gsub("(?<x>[a-z])Token"; "\(.x)_Token") | ascii_upcase)=\(.value)"' \
         > "../../$API_DIRECTORY_NAME/.env"
-    echo $API_ENDPOINT >> "../../$API_DIRECTORY_NAME/.env"
+    echo "API_ENDPOINT=$API_ENDPOINT" >> "../../$API_DIRECTORY_NAME/.env"
 }
 
 user-delete() {
