@@ -78,7 +78,7 @@ func handler(ctx context.Context, request events.APIGatewayV2HTTPRequest) (*even
 		SortId:        request.PathParameters["SortId"],
 	}
 
-	service, err := services.New(repository, modelIdentifiers)
+	service, err := services.New(repository, modelIdentifiers, request.RouteKey)
 	if err != nil {
 		return returnAPIGatewayV2HTTPErrorResponse(err)
 	}

@@ -4,22 +4,31 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"strings"
 
 	"j-and-a/internal/models"
 	"j-and-a/internal/repositories"
 )
 
-func NewLogService(repository *repositories.Repository, modelIdentifiers *models.ModelIdentifiers) (Service, error) {
-	if modelIdentifiers.PartitionId != "" && modelIdentifiers.SortId == "" {
-		return nil, errors.New("invalid path parameter; sort ID must be specified")
+func NewLogService(repository *repositories.Repository, modelIdentifiers *models.ModelIdentifiers, routeKey string) (Service, error) {
+	if routeKey == "DELETE /{PartitionType}/{PartitionId}/{SortType}" || routeKey == "PUT /{PartitionType}/{PartitionId}/{SortType}" {
+		return nil, errors.New("invalid service action")
 	}
 
-	if modelIdentifiers.PartitionId != "" && modelIdentifiers.PartitionType != models.ModelTypeJob {
+	if strings.Contains(routeKey, "/{PartitionType}") && modelIdentifiers.PartitionType != models.ModelTypeJob {
 		return nil, errors.New("invalid partition type")
 	}
 
-	if modelIdentifiers.SortType != models.ModelTypeLog {
+	if strings.Contains(routeKey, "/{PartitionId}") && modelIdentifiers.PartitionId == "" {
+		return nil, errors.New("invalid partition ID")
+	}
+
+	if strings.Contains(routeKey, "/{SortType}") && modelIdentifiers.SortType != models.ModelTypeLog {
 		return nil, errors.New("invalid sort type")
+	}
+
+	if strings.Contains(routeKey, "/{SortId}") && modelIdentifiers.SortId == "" {
+		return nil, errors.New("invalid sort ID")
 	}
 
 	return &LogService{Repository: repository, ModelIdentifiers: modelIdentifiers}, nil

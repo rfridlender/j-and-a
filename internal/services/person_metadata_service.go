@@ -4,22 +4,27 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"strings"
 
 	"j-and-a/internal/models"
 	"j-and-a/internal/repositories"
 )
 
-func NewPersonMetadataService(repository *repositories.Repository, modelIdentifiers *models.ModelIdentifiers) (Service, error) {
-	if modelIdentifiers.SortId != "" {
-		return nil, errors.New("invalid path parameter; sort ID must not be specified")
-	}
-
-	if modelIdentifiers.PartitionId != "" && modelIdentifiers.PartitionType != models.ModelTypePerson {
+func NewPersonMetadataService(repository *repositories.Repository, modelIdentifiers *models.ModelIdentifiers, routeKey string) (Service, error) {
+	if strings.Contains(routeKey, "/{PartitionType}") && modelIdentifiers.PartitionType != models.ModelTypePerson {
 		return nil, errors.New("invalid partition type")
 	}
 
-	if modelIdentifiers.SortType != models.ModelTypePersonMetadata {
+	if strings.Contains(routeKey, "/{PartitionId}") && modelIdentifiers.PartitionId == "" {
+		return nil, errors.New("invalid partition ID")
+	}
+
+	if strings.Contains(routeKey, "/{SortType}") && modelIdentifiers.SortType != models.ModelTypePersonMetadata {
 		return nil, errors.New("invalid sort type")
+	}
+
+	if strings.Contains(routeKey, "/{SortId}") {
+		return nil, errors.New("invalid service action")
 	}
 
 	return &PersonMetadataService{Repository: repository, ModelIdentifiers: modelIdentifiers}, nil

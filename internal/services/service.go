@@ -8,12 +8,12 @@ import (
 	"j-and-a/internal/repositories"
 )
 
-func New(repository *repositories.Repository, modelIdentifiers *models.ModelIdentifiers) (Service, error) {
+func New(repository *repositories.Repository, modelIdentifiers *models.ModelIdentifiers, routeKey string) (Service, error) {
 	switch modelIdentifiers.SortType {
 	case models.ModelTypeLog:
-		return NewLogService(repository, modelIdentifiers)
+		return NewLogService(repository, modelIdentifiers, routeKey)
 	case models.ModelTypePersonMetadata:
-		return NewPersonMetadataService(repository, modelIdentifiers)
+		return NewPersonMetadataService(repository, modelIdentifiers, routeKey)
 	default:
 		return nil, errors.New("unsupported service")
 	}
