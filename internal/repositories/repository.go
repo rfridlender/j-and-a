@@ -144,10 +144,10 @@ func (r *Repository) GetBySortType(ctx context.Context, modelIdentifiers *models
 	queryOutput, err := r.Client.Query(ctx, &dynamodb.QueryInput{
 		TableName:              aws.String(r.TableName),
 		IndexName:              aws.String(r.IndexName),
-		KeyConditionExpression: aws.String("EntityType = :EntityType AND begins_with(SK, :SK)"),
+		KeyConditionExpression: aws.String("ModelType = :ModelType AND begins_with(SK, :SK)"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
-			":EntityType": &types.AttributeValueMemberS{Value: string(modelIdentifiers.SortType)},
-			":SK":         &types.AttributeValueMemberS{Value: models.EncodeAnonymousSortKey(0, modelIdentifiers.SortType)},
+			":ModelType": &types.AttributeValueMemberS{Value: string(modelIdentifiers.SortType)},
+			":SK":        &types.AttributeValueMemberS{Value: models.EncodeAnonymousSortKey(0, modelIdentifiers.SortType)},
 		},
 	})
 	if err != nil {

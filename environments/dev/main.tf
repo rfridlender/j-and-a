@@ -71,7 +71,7 @@ module "user_pool" {
 }
 
 locals {
-  dynamodb_index_name = "${var.project_name}-${var.environment}-EntityType-SK-index"
+  dynamodb_index_name = "${var.project_name}-${var.environment}-ModelType-SK-index"
 }
 
 module "dynamodb_table" {
@@ -84,7 +84,7 @@ module "dynamodb_table" {
   global_secondary_indexes = [
     {
       name            = local.dynamodb_index_name
-      hash_key        = "EntityType"
+      hash_key        = "ModelType"
       range_key       = "SK"
       projection_type = "ALL"
     }
@@ -100,7 +100,7 @@ module "dynamodb_table" {
       type = "S"
     },
     {
-      name = "EntityType"
+      name = "ModelType"
       type = "S"
     },
   ]

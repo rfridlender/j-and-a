@@ -11,7 +11,7 @@ func (p *PersonMetadataPayload) Item(modelIdentifiers *ModelIdentifiers, version
 		FamilyName:    p.FamilyName,
 		PK:            EncodePartitionKey(ModelTypePerson, modelIdentifiers.PartitionId),
 		SK:            EncodeSortKey(version, ModelTypePersonMetadata, modelIdentifiers.SortId),
-		EntityType:    ModelTypePersonMetadata,
+		ModelType:     ModelTypePersonMetadata,
 		LatestVersion: latestVersion,
 		CreatedAt:     createdAt,
 		CreatedBy:     createdBy,
@@ -25,7 +25,7 @@ type PersonMetadataItem struct {
 	FamilyName    string
 	PK            string
 	SK            string
-	EntityType    string
+	ModelType     string
 	LatestVersion int `dynamodbav:",omitempty"`
 	CreatedAt     string
 	CreatedBy     string
