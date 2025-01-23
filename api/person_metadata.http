@@ -8,32 +8,32 @@
 
 ### DELETE /{PartitionType}/{PartitionId}/{SortType}
 
-DELETE {{API_ENDPOINT}}/{PartitionType}/{PartitionId}/{SortType}
+DELETE {{API_ENDPOINT}}/{{PartitionType}}/{{PartitionId}}/{{SortType}}
 Authorization: Bearer {{ID_TOKEN}}
 
 ### DELETE /{PartitionType}/{PartitionId}/{SortType}/{SortId}
 
-DELETE {{API_ENDPOINT}}/{PartitionType}/{PartitionId}/{SortType}/{SortId}
+DELETE {{API_ENDPOINT}}/{{PartitionType}}/{{PartitionId}}/{{SortType}}/{{SortId}}
 Authorization: Bearer {{ID_TOKEN}}
 
 ### GET /{PartitionType}/{PartitionId}/{SortType}
 
-GET {{API_ENDPOINT}}/{PartitionType}/{PartitionId}/{SortType}
+GET {{API_ENDPOINT}}/{{PartitionType}}/{{PartitionId}}/{{SortType}}
 Authorization: Bearer {{ID_TOKEN}}
 
 ### GET /{PartitionType}/{PartitionId}/{SortType}/{SortId}
 
-GET {{API_ENDPOINT}}/{PartitionType}/{PartitionId}/{SortType}/{SortId}
+GET {{API_ENDPOINT}}/{{PartitionType}}/{{PartitionId}}/{{SortType}}/{{SortId}}
 Authorization: Bearer {{ID_TOKEN}}
 
 ### GET /{SortType}
 
-GET {{API_ENDPOINT}}/{SortType}
+GET {{API_ENDPOINT}}/{{SortType}}
 Authorization: Bearer {{ID_TOKEN}}
 
 ### PUT /{PartitionType}/{PartitionId}/{SortType}
 
-PUT {{API_ENDPOINT}}/{PartitionType}/{PartitionId}/{SortType}
+PUT {{API_ENDPOINT}}/{{PartitionType}}/{{PartitionId}}/{{SortType}}
 Authorization: Bearer {{ID_TOKEN}}
 
 {
@@ -41,5 +41,12 @@ Authorization: Bearer {{ID_TOKEN}}
 	"familyName": "Ramirez"
 }
 
-PUT {{API_ENDPOINT}}/{PartitionType}/{PartitionId}/{SortType}/{SortId}
+### PUT /{PartitionType}/{PartitionId}/{SortType}/{SortId}
+
+PUT {{API_ENDPOINT}}/{{PartitionType}}/{{PartitionId}}/{{SortType}}/{{SortId}}
 Authorization: Bearer {{ID_TOKEN}}
+
+{
+	"givenName": "Jose",
+	"familyName": "Ramirez"
+}
