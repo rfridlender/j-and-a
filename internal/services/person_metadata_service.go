@@ -14,7 +14,7 @@ func NewPersonMetadataService(repository *repositories.Repository, modelIdentifi
 		return nil, errors.New("sort ID must not be specified")
 	}
 
-	if modelIdentifiers.PartitionType != models.ModelTypePerson {
+	if modelIdentifiers.PartitionId != "" && modelIdentifiers.PartitionType != models.ModelTypePerson {
 		return nil, errors.New("invalid partition type")
 	}
 
