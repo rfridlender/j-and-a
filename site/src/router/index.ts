@@ -4,11 +4,11 @@ import { useAuthSession } from "@/stores/authSession"
 import { useUserAttributes } from "@/stores/userAttributes"
 import ConfirmSignInWithEmailCode from "@/views/ConfirmSignInWithEmailCode.vue"
 import DashboardView from "@/views/DashboardView.vue"
-import PersonView from "@/views/PersonView.vue"
+import ModelView from "@/views/ModelView.vue"
 import SignIn from "@/views/SignIn.vue"
 
 import { fetchAuthSession, fetchUserAttributes } from "aws-amplify/auth"
-
+import { ScrollText, User } from "lucide-vue-next"
 import {
     createRouter,
     createWebHistory,
@@ -16,6 +16,11 @@ import {
     type RouteLocationNormalized,
     type RouteLocationNormalizedLoaded,
 } from "vue-router"
+
+export const MODELS = [
+    { modelType: "Log", icon: ScrollText },
+    { modelType: "PersonMetadata", icon: User },
+]
 
 const publicRoutes = [
     {
@@ -28,7 +33,7 @@ const publicRoutes = [
         name: "Confirm Sign-In With Email Code",
         component: ConfirmSignInWithEmailCode,
         beforeEnter: (to: RouteLocationNormalized, from: RouteLocationNormalizedLoaded, next: NavigationGuardNext) =>
-            from.path !== "/sign-in" || !to.query.email ? next(false) : next(),
+            from.path === "/sign-in" && to.query.email ? next() : next(false),
     },
 ]
 
@@ -39,9 +44,16 @@ export const privateRoutes = [
         component: DashboardView,
     },
     {
-        path: "/person",
-        name: "Person",
-        component: PersonView,
+        path: "/:modelType",
+        name: "Model",
+        component: ModelView,
+        beforeEnter: (to: RouteLocationNormalized, _: RouteLocationNormalizedLoaded, next: NavigationGuardNext) =>
+            MODELS.some(
+                ({ modelType }) =>
+                    modelType === (typeof to.params.modelType === "string" ? to.params.modelType : to.params.modelType[0])
+            )
+                ? next()
+                : next(false),
     },
 ]
 
