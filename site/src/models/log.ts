@@ -6,7 +6,7 @@ import type { ColumnDef } from "@tanstack/vue-table"
 import { ArrowUpDown } from "lucide-vue-next"
 import { h } from "vue"
 
-export type PersonMetadata = {
+export type Log = {
     givenName: string
     familyName: string
     personId: string
@@ -16,7 +16,7 @@ export type PersonMetadata = {
     deletedBy: string
 }
 
-export const PersonMetadataColumns: ColumnDef<PersonMetadata>[] = [
+export const logColumns: ColumnDef<Log>[] = [
     {
         id: "select",
         header: ({ table }) =>

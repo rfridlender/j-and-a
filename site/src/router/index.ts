@@ -1,5 +1,6 @@
 import PrivateLayout from "@/layouts/PrivateLayout.vue"
 import PublicLayout from "@/layouts/PublicLayout.vue"
+import { modelDefinitions } from "@/models"
 import { useAuthSession } from "@/stores/authSession"
 import { useUserAttributes } from "@/stores/userAttributes"
 import ConfirmSignInWithEmailCode from "@/views/ConfirmSignInWithEmailCode.vue"
@@ -8,7 +9,6 @@ import ModelView from "@/views/ModelView.vue"
 import SignIn from "@/views/SignIn.vue"
 
 import { fetchAuthSession, fetchUserAttributes } from "aws-amplify/auth"
-import { ScrollText, User } from "lucide-vue-next"
 import {
     createRouter,
     createWebHistory,
@@ -16,11 +16,6 @@ import {
     type RouteLocationNormalized,
     type RouteLocationNormalizedLoaded,
 } from "vue-router"
-
-export const MODELS = [
-    { modelType: "Log", icon: ScrollText },
-    { modelType: "PersonMetadata", icon: User },
-]
 
 const publicRoutes = [
     {
@@ -44,16 +39,11 @@ export const privateRoutes = [
         component: DashboardView,
     },
     {
-        path: "/:modelType",
+        path: "model/:modelType",
         name: "Model",
         component: ModelView,
         beforeEnter: (to: RouteLocationNormalized, _: RouteLocationNormalizedLoaded, next: NavigationGuardNext) =>
-            MODELS.some(
-                ({ modelType }) =>
-                    modelType === (typeof to.params.modelType === "string" ? to.params.modelType : to.params.modelType[0])
-            )
-                ? next()
-                : next(false),
+            to.params.modelType.toString() in modelDefinitions ? next() : next(false),
     },
 ]
 

@@ -39,10 +39,12 @@ import {
     SidebarRail,
     SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { MODELS, privateRoutes } from "@/router"
+import { modelDefinitions } from "@/models"
+import { privateRoutes } from "@/router"
 import { useUserAttributes } from "@/stores/userAttributes"
 
 import { signOut } from "aws-amplify/auth"
+import * as changeCase from "change-case"
 import {
     BadgeCheck,
     ChevronRight,
@@ -58,15 +60,6 @@ import { RouterLink, useRouter } from "vue-router"
 
 const router = useRouter()
 const { userAttributes } = useUserAttributes()
-
-function titleize(notTitle: string) {
-    return notTitle
-        .replace(/([a-z])([A-Z])/g, "$1 $2")
-        .replace(/([A-Z])([A-Z][a-z])/g, "$1 $2")
-        .replace(/^./, (firstCharacter) => firstCharacter.toUpperCase())
-        .replace(/\s+/g, " ")
-        .trim()
-}
 
 const data = {
     user: {
@@ -148,7 +141,9 @@ async function onSignOut() {
                                 <CollapsibleContent>
                                     <SidebarMenuSub>
                                         <SidebarMenuSubItem
-                                            v-for="privateRoute in privateRoutes.filter(({ path }) => path !== '/:modelType')"
+                                            v-for="privateRoute in privateRoutes.filter(
+                                                ({ path }) => path !== '/model/:modelType'
+                                            )"
                                             :key="privateRoute.path"
                                         >
                                             <SidebarMenuSubButton as-child>
@@ -168,11 +163,11 @@ async function onSignOut() {
                     <SidebarGroupLabel>Models</SidebarGroupLabel>
 
                     <SidebarMenu>
-                        <SidebarMenuItem v-for="model in MODELS" :key="model.modelType">
+                        <SidebarMenuItem v-for="(modelDefinition, modelType) of modelDefinitions" :key="modelType">
                             <SidebarMenuButton as-child>
-                                <RouterLink :to="`/${model.modelType}`">
-                                    <component :is="model.icon" />
-                                    <span>{{ titleize(model.modelType) }}</span>
+                                <RouterLink :to="`/model/${modelType}`">
+                                    <component :is="modelDefinition.icon" />
+                                    <span>{{ changeCase.capitalCase(modelType) }}</span>
                                 </RouterLink>
                             </SidebarMenuButton>
 
