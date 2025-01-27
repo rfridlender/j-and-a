@@ -21,6 +21,7 @@
         "@vueuse/core": "^12.4.0",
         "aws-amplify": "^6.11.0",
         "axios": "^1.7.9",
+        "change-case": "^5.4.4",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "lucide-vue-next": "^0.469.0",
