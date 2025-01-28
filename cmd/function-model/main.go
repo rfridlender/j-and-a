@@ -77,6 +77,7 @@ func handler(ctx context.Context, request events.APIGatewayV2HTTPRequest) (*even
 	}
 	log.Printf("request %s", string(jsonRequest))
 
+	ctx = context.WithValue(ctx, "requestedAt", request.RequestContext.TimeEpoch)
 	ctx = context.WithValue(ctx, "requestedBy", request.RequestContext.Authorizer.JWT.Claims["sub"])
 
 	repository := &repositories.Repository{Client: client, TableName: tableName, IndexName: indexName}

@@ -40,7 +40,11 @@ func (r *Repository) DeleteByPartitionIdAndSortId(ctx context.Context, modelIden
 		}
 	}
 
-	deletedAt := time.Now().Format(time.RFC3339)
+	unixMilli, ok := ctx.Value("requestedAt").(int64)
+	if !ok {
+		return errors.New("failed to parse requested at within context")
+	}
+	deletedAt := time.UnixMilli(unixMilli).Format(time.RFC3339)
 	deletedBy, ok := ctx.Value("requestedBy").(string)
 	if !ok {
 		return errors.New("missing requested by within context")
@@ -193,10 +197,14 @@ func (r *Repository) PutByPartitionIdAndSortId(ctx context.Context, modelIdentif
 		}
 	}
 
-	createdAt := time.Now().Format(time.RFC3339)
+	unixMilli, ok := ctx.Value("requestedAt").(int64)
+	if !ok {
+		return errors.New("failed to parse requested at within context")
+	}
+	createdAt := time.UnixMilli(unixMilli).Format(time.RFC3339)
 	createdBy, ok := ctx.Value("requestedBy").(string)
 	if !ok {
-		return errors.New("missing requested by within context")
+		return errors.New("failed to parse requested by within context")
 	}
 
 	rootItem, err := attributevalue.MarshalMap(modelPayload.Item(modelIdentifiers, 0, latestVersion+1, createdAt, createdBy))
