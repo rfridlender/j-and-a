@@ -33,6 +33,10 @@ type LogItem struct {
 	DeletedBy     string `dynamodbav:",omitempty"`
 }
 
+func (i *LogItem) New() ModelItem {
+	return i.New()
+}
+
 func (i *LogItem) Data() (ModelData, error) {
 	_, partitionId, err := DecodePartitionKey(i.PK)
 	if err != nil {

@@ -33,6 +33,10 @@ type PersonMetadataItem struct {
 	DeletedBy     string `dynamodbav:",omitempty"`
 }
 
+func (i *PersonMetadataItem) New() ModelItem {
+	return i.New()
+}
+
 func (i *PersonMetadataItem) Data() (ModelData, error) {
 	_, partitionId, err := DecodePartitionKey(i.PK)
 	if err != nil {

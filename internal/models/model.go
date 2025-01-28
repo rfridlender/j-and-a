@@ -33,6 +33,7 @@ type ModelPayload interface {
 }
 
 type ModelItem interface {
+	New() ModelItem
 	Data() (ModelData, error)
 }
 
