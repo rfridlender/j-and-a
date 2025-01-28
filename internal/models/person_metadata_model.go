@@ -34,7 +34,7 @@ type PersonMetadataItem struct {
 }
 
 func (i *PersonMetadataItem) New() ModelItem {
-	return i.New()
+	return new(PersonMetadataItem)
 }
 
 func (i *PersonMetadataItem) Data() (ModelData, error) {

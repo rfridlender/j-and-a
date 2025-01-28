@@ -34,7 +34,7 @@ type LogItem struct {
 }
 
 func (i *LogItem) New() ModelItem {
-	return i.New()
+	return new(LogItem)
 }
 
 func (i *LogItem) Data() (ModelData, error) {
