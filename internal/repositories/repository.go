@@ -99,7 +99,8 @@ func (r *Repository) GetByPartitionId(ctx context.Context, modelIdentifiers *mod
 
 	datas := make([]models.ModelData, queryOutput.Count)
 	for idx, queryOutputItem := range queryOutput.Items {
-		err = attributevalue.UnmarshalMap(queryOutputItem, modelItem.New())
+		modelItem = modelItem.New()
+		err = attributevalue.UnmarshalMap(queryOutputItem, modelItem)
 		if err != nil {
 			return nil, err
 		}
@@ -160,7 +161,8 @@ func (r *Repository) GetBySortType(ctx context.Context, modelIdentifiers *models
 
 	datas := make([]models.ModelData, queryOutput.Count)
 	for idx, queryOutputItem := range queryOutput.Items {
-		err = attributevalue.UnmarshalMap(queryOutputItem, modelItem.New())
+		modelItem = modelItem.New()
+		err = attributevalue.UnmarshalMap(queryOutputItem, modelItem)
 		if err != nil {
 			return nil, err
 		}
