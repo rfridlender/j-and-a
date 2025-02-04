@@ -17,7 +17,7 @@ import * as z from "zod"
 const router = useRouter()
 const { toast } = useToast()
 
-const { handleSubmit, isSubmitting } = useForm({
+const formContext = useForm({
     validationSchema: toTypedSchema(
         z.object({
             email: z.string().min(1, "Email required").email("Invalid email"),
@@ -39,7 +39,7 @@ onMounted(() => {
     }
 })
 
-const onSubmit = handleSubmit(async (values) => {
+const onSubmit = formContext.handleSubmit(async (values) => {
     try {
         const signInOutput = await signIn({
             username: values.email,
@@ -80,26 +80,24 @@ const onSubmit = handleSubmit(async (values) => {
 
         <CardContent>
             <form id="form" @submit="onSubmit">
-                <div class="grid gap-4">
-                    <FormField v-slot="{ componentField }" name="email">
-                        <FormItem v-auto-animate>
-                            <FormLabel>Email</FormLabel>
+                <FormField v-slot="{ componentField }" name="email">
+                    <FormItem v-auto-animate>
+                        <FormLabel>Email</FormLabel>
 
-                            <FormControl>
-                                <Input v-bind="componentField" type="text" placeholder="Email" />
-                            </FormControl>
+                        <FormControl>
+                            <Input v-bind="componentField" type="text" placeholder="Email" />
+                        </FormControl>
 
-                            <FormMessage />
-                        </FormItem>
-                    </FormField>
-                </div>
+                        <FormMessage />
+                    </FormItem>
+                </FormField>
             </form>
         </CardContent>
 
         <CardFooter class="flex flex-col">
-            <Button class="w-full" type="submit" form="form" :disabled="isSubmitting">
+            <Button class="w-full" type="submit" form="form" :disabled="formContext.isSubmitting">
                 Sign In
-                <LogIn v-if="!isSubmitting" />
+                <LogIn v-if="!formContext.isSubmitting" />
                 <LoaderCircle v-else class="animate-spin" />
             </Button>
         </CardFooter>

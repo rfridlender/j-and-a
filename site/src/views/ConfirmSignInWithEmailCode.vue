@@ -17,7 +17,7 @@ import * as z from "zod"
 const router = useRouter()
 const { toast } = useToast()
 
-const { handleSubmit, isSubmitting } = useForm({
+const formContext = useForm({
     validationSchema: toTypedSchema(
         z.object({
             verificationCode: z.string().min(1, "Verification code required"),
@@ -28,7 +28,7 @@ const { handleSubmit, isSubmitting } = useForm({
     },
 })
 
-const onSubmit = handleSubmit(async (values) => {
+const onSubmit = formContext.handleSubmit(async (values) => {
     try {
         const confirmSignInOutput = await confirmSignIn({
             challengeResponse: values.verificationCode,
@@ -111,26 +111,24 @@ async function onResendVerificationCode() {
 
         <CardContent>
             <form id="form" @submit="onSubmit">
-                <div class="grid gap-4">
-                    <FormField v-slot="{ componentField }" name="verificationCode">
-                        <FormItem v-auto-animate>
-                            <FormLabel>Verification Code</FormLabel>
+                <FormField v-slot="{ componentField }" name="verificationCode">
+                    <FormItem v-auto-animate>
+                        <FormLabel>Verification Code</FormLabel>
 
-                            <FormControl>
-                                <Input v-bind="componentField" type="text" placeholder="Verification Code" autocomplete="off" />
-                            </FormControl>
+                        <FormControl>
+                            <Input v-bind="componentField" type="text" placeholder="Verification Code" autocomplete="off" />
+                        </FormControl>
 
-                            <FormMessage />
-                        </FormItem>
-                    </FormField>
-                </div>
+                        <FormMessage />
+                    </FormItem>
+                </FormField>
             </form>
         </CardContent>
 
         <CardFooter class="flex flex-col">
-            <Button class="w-full" type="submit" form="form" :disabled="isSubmitting">
+            <Button class="w-full" type="submit" form="form" :disabled="formContext.isSubmitting">
                 Verify
-                <ShieldCheck v-if="!isSubmitting" />
+                <ShieldCheck v-if="!formContext.isSubmitting" />
                 <LoaderCircle v-else class="animate-spin" />
             </Button>
 
