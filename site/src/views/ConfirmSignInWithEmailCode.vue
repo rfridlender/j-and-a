@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { toast } from "@/components/ui/toast"
+import { useToast } from "@/components/ui/toast"
 
 import { vAutoAnimate } from "@formkit/auto-animate/vue"
 import { toTypedSchema } from "@vee-validate/zod"
@@ -15,15 +15,14 @@ import { useRouter } from "vue-router"
 import * as z from "zod"
 
 const router = useRouter()
-
-const signInSchema = toTypedSchema(
-    z.object({
-        verificationCode: z.string().min(1, "Verification code required"),
-    })
-)
+const { toast } = useToast()
 
 const { handleSubmit, isSubmitting } = useForm({
-    validationSchema: signInSchema,
+    validationSchema: toTypedSchema(
+        z.object({
+            verificationCode: z.string().min(1, "Verification code required"),
+        })
+    ),
     initialValues: {
         verificationCode: "",
     },
