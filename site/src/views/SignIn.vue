@@ -12,7 +12,7 @@ import { LoaderCircle, LogIn } from "lucide-vue-next"
 import { useForm } from "vee-validate"
 import { onMounted } from "vue"
 import { useRouter } from "vue-router"
-import * as z from "zod"
+import { z } from "zod"
 
 const router = useRouter()
 const { toast } = useToast()
@@ -20,12 +20,9 @@ const { toast } = useToast()
 const formContext = useForm({
     validationSchema: toTypedSchema(
         z.object({
-            email: z.string().min(1, "Email required").email("Invalid email"),
+            email: z.string().min(1, "Email required").email("Invalid email").default(""),
         })
     ),
-    initialValues: {
-        email: "",
-    },
 })
 
 onMounted(() => {
@@ -95,9 +92,9 @@ const onSubmit = formContext.handleSubmit(async (values) => {
         </CardContent>
 
         <CardFooter class="flex flex-col">
-            <Button class="w-full" type="submit" form="form" :disabled="formContext.isSubmitting">
+            <Button class="w-full" type="submit" form="form" :disabled="formContext.isSubmitting.value">
                 Sign In
-                <LogIn v-if="!formContext.isSubmitting" />
+                <LogIn v-if="!formContext.isSubmitting.value" />
                 <LoaderCircle v-else class="animate-spin" />
             </Button>
         </CardFooter>

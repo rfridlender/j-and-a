@@ -12,7 +12,7 @@ import { LoaderCircle, ShieldCheck } from "lucide-vue-next"
 import { useForm } from "vee-validate"
 import { ref } from "vue"
 import { useRouter } from "vue-router"
-import * as z from "zod"
+import { z } from "zod"
 
 const router = useRouter()
 const { toast } = useToast()
@@ -20,12 +20,9 @@ const { toast } = useToast()
 const formContext = useForm({
     validationSchema: toTypedSchema(
         z.object({
-            verificationCode: z.string().min(1, "Verification code required"),
+            verificationCode: z.string().min(1, "Verification code required").default(""),
         })
     ),
-    initialValues: {
-        verificationCode: "",
-    },
 })
 
 const onSubmit = formContext.handleSubmit(async (values) => {
@@ -126,9 +123,9 @@ async function onResendVerificationCode() {
         </CardContent>
 
         <CardFooter class="flex flex-col">
-            <Button class="w-full" type="submit" form="form" :disabled="formContext.isSubmitting">
+            <Button class="w-full" type="submit" form="form" :disabled="formContext.isSubmitting.value">
                 Verify
-                <ShieldCheck v-if="!formContext.isSubmitting" />
+                <ShieldCheck v-if="!formContext.isSubmitting.value" />
                 <LoaderCircle v-else class="animate-spin" />
             </Button>
 
