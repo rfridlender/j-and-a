@@ -84,19 +84,19 @@ func updatedAt(d1, d2 models.ModelData) bool {
 	if v1.Kind() != reflect.Struct || v2.Kind() != reflect.Struct {
 		log.Fatalln("model data must be pointer to struct")
 	}
-	v1 = v1.FieldByName("DeletedAt")
-	if v1.Len() == 0 {
-		v1 = v1.FieldByName("CreatedAt")
+	updatedAt1 := v1.FieldByName("DeletedAt")
+	if updatedAt1.Len() == 0 {
+		updatedAt1 = v1.FieldByName("CreatedAt")
 	}
-	v2 = v2.FieldByName("DeletedAt")
-	if v2.Len() == 0 {
-		v2 = v2.FieldByName("CreatedAt")
+	updatedAt2 := v2.FieldByName("DeletedAt")
+	if updatedAt2.Len() == 0 {
+		updatedAt2 = v2.FieldByName("CreatedAt")
 	}
-	t1, err := time.Parse(time.RFC3339, v1.String())
+	t1, err := time.Parse(time.RFC3339, updatedAt1.String())
 	if err != nil {
 		log.Fatalln(err)
 	}
-	t2, err := time.Parse(time.RFC3339, v2.String())
+	t2, err := time.Parse(time.RFC3339, updatedAt2.String())
 	if err != nil {
 		log.Fatalln(err)
 	}
