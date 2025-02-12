@@ -68,8 +68,8 @@ func isDeleted(d1, d2 models.ModelData) bool {
 	if v1.Kind() != reflect.Struct || v2.Kind() != reflect.Struct {
 		log.Fatalln("model data must be pointer to struct")
 	}
-	v1 = v1.FieldByName("deletedAt")
-	v2 = v2.FieldByName("deletedAt")
+	v1 = v1.FieldByName("DeletedAt")
+	v2 = v2.FieldByName("DeletedAt")
 	return v1.Len() < v2.Len()
 }
 
@@ -84,13 +84,13 @@ func updatedAt(d1, d2 models.ModelData) bool {
 	if v1.Kind() != reflect.Struct || v2.Kind() != reflect.Struct {
 		log.Fatalln("model data must be pointer to struct")
 	}
-	v1 = v1.FieldByName("deletedAt")
+	v1 = v1.FieldByName("DeletedAt")
 	if v1.Len() == 0 {
-		v1 = v1.FieldByName("createdAt")
+		v1 = v1.FieldByName("CreatedAt")
 	}
-	v2 = v2.FieldByName("deletedAt")
+	v2 = v2.FieldByName("DeletedAt")
 	if v2.Len() == 0 {
-		v2 = v2.FieldByName("createdAt")
+		v2 = v2.FieldByName("CreatedAt")
 	}
 	t1, err := time.Parse(time.RFC3339, v1.String())
 	if err != nil {
