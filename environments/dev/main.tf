@@ -20,19 +20,31 @@ provider "github" {
   token = var.fine_grained_github_token
 }
 
+locals {
+  environment = basename(abspath(path.module))
+}
+
 data "github_repository" "repository" {
   full_name = var.repository_full_name
 }
 
 resource "github_repository_environment" "repository_environment" {
   repository  = data.github_repository.repository.name
-  environment = var.environment
+  environment = local.environment
+}
+
+resource "github_actions_environment_variable" "environment_variables" {
+  for_each = local.variables
+  repository    = var.project_name
+  environment   = github_repository_environment.repository_environment.environment
+  variable_name = "TF_VAR_${each.key}"
+  value         = each.value
 }
 
 module "iam_github_oidc_role" {
   source = "terraform-aws-modules/iam/aws//modules/iam-github-oidc-role"
 
-  name     = "${var.project_name}-${var.environment}-github-oidc-role"
+  name     = "${var.project_name}-${local.environment}-github-oidc-role"
   subjects = ["${data.github_repository.repository.full_name}:*"]
 
   policies = {
@@ -51,7 +63,7 @@ module "iam_github_oidc_role" {
 module "cdn" {
   source = "git::https://github.com/rfridlender/terraform-modules.git//cdn?ref=main"
 
-  environment                  = var.environment
+  environment                  = local.environment
   force_destroy_site_s3_bucket = true
   project_name                 = var.project_name
 }
@@ -65,19 +77,19 @@ module "user_pool" {
 
   aws_ses_email     = data.aws_ses_email_identity.email_identity.email
   aws_ses_email_arn = data.aws_ses_email_identity.email_identity.arn
-  environment       = var.environment
+  environment       = local.environment
   passwordless      = true
   project_name      = var.project_name
 }
 
 locals {
-  dynamodb_index_name = "${var.project_name}-${var.environment}-ModelType-SK-index"
+  dynamodb_index_name = "${var.project_name}-${local.environment}-ModelType-SK-index"
 }
 
 module "dynamodb_table" {
   source = "terraform-aws-modules/dynamodb-table/aws"
 
-  name      = "${var.project_name}-${var.environment}-PK-SK-table"
+  name      = "${var.project_name}-${local.environment}-PK-SK-table"
   hash_key  = "PK"
   range_key = "SK"
 
@@ -109,7 +121,7 @@ module "dynamodb_table" {
 module "artifact_store" {
   source = "terraform-aws-modules/s3-bucket/aws"
 
-  bucket = "${var.project_name}-${var.environment}-artifact-store"
+  bucket = "${var.project_name}-${local.environment}-artifact-store"
   acl    = "private"
 
   block_public_acls       = true
@@ -129,7 +141,7 @@ module "api_gateway" {
   source = "git::https://github.com/rfridlender/terraform-modules.git//api-gateway?ref=main"
 
   aws_region   = var.aws_region
-  environment  = var.environment
+  environment  = local.environment
   project_name = var.project_name
   routes = {
     "DELETE /{PartitionType}/{PartitionId}/{SortType}"          = module.function_model.lambda_function_arn
@@ -147,7 +159,7 @@ module "api_gateway" {
 module "function_iam_policy" {
   source = "terraform-aws-modules/iam/aws//modules/iam-policy"
 
-  name = "${var.project_name}-${var.environment}-function-iam-policy"
+  name = "${var.project_name}-${local.environment}-function-iam-policy"
   path = "/"
 
   policy = templatefile(
@@ -159,7 +171,7 @@ module "function_iam_policy" {
 module "function_model" {
   source = "terraform-aws-modules/lambda/aws"
 
-  function_name = "${var.project_name}-${var.environment}-function-model"
+  function_name = "${var.project_name}-${local.environment}-function-model"
   runtime       = "provided.al2023"
   handler       = "bootstrap"
   architectures = ["arm64"]

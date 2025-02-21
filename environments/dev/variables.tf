@@ -1,17 +1,11 @@
-resource "github_actions_environment_variable" "environment_variables" {
-  for_each = {
-    "AWS_REGION"                = var.aws_region
-    "AWS_SES_EMAIL"             = var.aws_ses_email
-    "ENVIRONMENT"               = var.environment
-    "FINE_GRAINED_GITHUB_TOKEN" = var.fine_grained_github_token
-    "IAM_GITHUB_OIDC_ROLE_ARN"  = module.iam_github_oidc_role.arn
-    "PROJECT_NAME"              = var.project_name
+locals {
+  variables = {
+    aws_region                = var.aws_region
+    aws_ses_email             = var.aws_ses_email
+    fine_grained_github_token = var.fine_grained_github_token
+    iam_github_oidc_role_arn  = module.iam_github_oidc_role.arn
+    project_name              = var.project_name
   }
-
-  repository    = var.project_name
-  environment   = github_repository_environment.repository_environment.environment
-  variable_name = each.key
-  value         = each.value
 }
 
 variable "aws_region" {
@@ -21,11 +15,6 @@ variable "aws_region" {
 
 variable "aws_ses_email" {
   description = "AWS SES email"
-  type        = string
-}
-
-variable "environment" {
-  description = "Environment"
   type        = string
 }
 
