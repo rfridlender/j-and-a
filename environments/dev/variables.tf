@@ -1,34 +1,34 @@
 locals {
   variables = {
-    aws_region                = var.aws_region
-    aws_ses_email             = var.aws_ses_email
-    fine_grained_github_token = var.fine_grained_github_token
-    iam_github_oidc_role_arn  = module.iam_github_oidc_role.arn
-    project_name              = var.project_name
+    AWS_REGION                = var.AWS_REGION
+    AWS_SES_EMAIL             = var.AWS_SES_EMAIL
+    GITHUB_TOKEN = var.GITHUB_TOKEN
+    IAM_GITHUB_OIDC_ROLE_ARN  = module.iam_github_oidc_role.arn
+    PROJECT_NAME              = var.PROJECT_NAME
   }
 }
 
-variable "aws_region" {
+variable "AWS_REGION" {
   description = "AWS region"
   type        = string
 }
 
-variable "aws_ses_email" {
+variable "AWS_SES_EMAIL" {
   description = "AWS SES email"
   type        = string
 }
 
-variable "fine_grained_github_token" {
-  description = "Fine-grained GitHub token"
+variable "GITHUB_TOKEN" {
+  description = "GitHub token"
   type        = string
 }
 
-variable "project_name" {
+variable "PROJECT_NAME" {
   description = "Project name"
   type        = string
 }
 
-variable "repository_full_name" {
+variable "REPOSITORY_FULL_NAME" {
   description = "Repository full name"
   type        = string
 }

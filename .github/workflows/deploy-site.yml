@@ -2,7 +2,7 @@ name: "Deploy Site"
 on:
   push:
     branches: [prod, staging, dev]
-    paths: [site/**]
+    paths: [.github/workflows/deploy-site.yml, site/**]
 permissions:
   contents: read
   id-token: write
@@ -21,28 +21,18 @@ jobs:
         with:
           fetch-depth: 0
       - name: Configure Git credentials
-        run: git config --global url."https://${{ vars.FINE_GRAINED_GITHUB_TOKEN }}@github.com".insteadOf "https://github.com"
+        run: git config --global url."https://${{ vars.TF_VAR_GITHUB_TOKEN }}@github.com".insteadOf "https://github.com"
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-region: ${{ vars.AWS_REGION }}
-          role-to-assume: ${{ vars.IAM_GITHUB_OIDC_ROLE_ARN }}
+          aws-region: ${{ vars.TF_VAR_AWS_REGION }}
+          role-to-assume: ${{ vars.TF_VAR_IAM_GITHUB_OIDC_ROLE_ARN }}
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_wrapper: false
       - name: Check Terraform format
         run: terraform fmt -check
-      - name: Generate terraform.tfvars file
-        run: |
-          cat <<EOF > terraform.tfvars
-          aws_region                = "${{ vars.AWS_REGION }}"
-          aws_ses_email             = "${{ vars.AWS_SES_EMAIL }}"
-          environment               = "${{ vars.ENVIRONMENT }}"
-          fine_grained_github_token = "${{ vars.FINE_GRAINED_GITHUB_TOKEN }}"
-          repository_full_name      = "${{ github.repository }}"
-          project_name              = "${{ vars.PROJECT_NAME }}"
-          EOF
       - name: Initialize Terraform
         working-directory: environments/${{ github.ref_name }}/
         run: terraform init -input=false
