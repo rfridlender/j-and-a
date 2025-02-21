@@ -25,6 +25,16 @@ then
     source .env.tokens set
 fi
 
+build() {
+    for dir in cmd/*; do
+    if [ -d $dir ]; then
+        echo "Building $(basename $dir)..."
+        GOOS=linux GOARCH=arm64 go build -tags lambda.norpc -o $dir/bootstrap $dir/main.go
+        echo "Build complete for $(basename $dir)."
+    fi
+    done
+}
+
 deploy() {
     terraform init -input=false
     echo
@@ -215,6 +225,9 @@ user-refresh() {
 }
 
 case $1 in
+    build)
+        build
+        ;;
     format)
         format
         ;;
