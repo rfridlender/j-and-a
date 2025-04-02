@@ -23,7 +23,7 @@ const columns = computed(() =>
 <template>
     <DropdownMenu>
         <DropdownMenuTrigger as-child>
-            <Button variant="outline" size="sm" class="hidden h-8 ml-auto lg:flex">
+            <Button variant="outline" class="h-10 hidden lg:flex">
                 <SlidersHorizontal class="w-4 h-4 mr-2" />
                 View
             </Button>

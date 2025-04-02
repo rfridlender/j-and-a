@@ -1,8 +1,13 @@
-<script setup lang="ts" generic="TData, TValue">
-import { DataTablePagination, DataTableViewOptions } from "@/components/ui/data-table"
-import { Input } from "@/components/ui/input"
+<script setup lang="ts">
+import {
+    DataTableFilterOptions,
+    DataTablePagination,
+    DataTableRowOptions,
+    DataTableViewOptions,
+} from "@/components/ui/data-table"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { valueUpdater } from "@/lib/utils"
+import type { ModelTypeValues } from "@/models"
 
 import type { ColumnDef, ColumnFiltersState, ExpandedState, SortingState, VisibilityState } from "@tanstack/vue-table"
 import {
@@ -14,18 +19,30 @@ import {
     getSortedRowModel,
     useVueTable,
 } from "@tanstack/vue-table"
-import { ref } from "vue"
+import { LoaderCircle } from "lucide-vue-next"
+import { ref, watch } from "vue"
 
 const props = defineProps<{
-    columns: ColumnDef<TData, TValue>[]
-    data: TData[]
+    columns: ColumnDef<ModelTypeValues>[]
+    data: ModelTypeValues[]
+    isDataLoading: boolean
+}>()
+
+defineEmits<{
+    delete: [originalRow: ModelTypeValues]
+    duplicate: [originalRow: ModelTypeValues]
+    edit: [originalRow: ModelTypeValues]
+    restore: [originalRow: ModelTypeValues]
 }>()
 
 const columnFilters = ref<ColumnFiltersState>([])
 const columnVisibility = ref<VisibilityState>({})
 const expanded = ref<ExpandedState>({})
-const sorting = ref<SortingState>([])
 const rowSelection = ref({})
+const sorting = ref<SortingState>([])
+
+const filterByColumnId = ref(props.columns.find(({ enableColumnFilter }) => enableColumnFilter !== false)?.id || "")
+watch(filterByColumnId, (_, oldValue) => table.getColumn(oldValue)?.setFilterValue(""))
 
 const table = useVueTable({
     get data() {
@@ -45,9 +62,6 @@ const table = useVueTable({
     onRowSelectionChange: (updaterOrValue) => valueUpdater(updaterOrValue, rowSelection),
     onSortingChange: (updaterOrValue) => valueUpdater(updaterOrValue, sorting),
     state: {
-        get sorting() {
-            return sorting.value
-        },
         get columnFilters() {
             return columnFilters.value
         },
@@ -60,20 +74,17 @@ const table = useVueTable({
         get rowSelection() {
             return rowSelection.value
         },
+        get sorting() {
+            return sorting.value
+        },
     },
 })
 </script>
 
 <template>
-    <div>
-        <div class="flex items-center py-4">
-            <Input
-                class="max-w-sm"
-                placeholder="Filter last names..."
-                :model-value="table.getColumn('familyName')?.getFilterValue() as string"
-                @update:model-value="table.getColumn('familyName')?.setFilterValue($event)"
-            />
-
+    <div class="w-full">
+        <div class="flex justify-between items-center pb-4">
+            <DataTableFilterOptions v-model="filterByColumnId" :table="table" />
             <DataTableViewOptions :table="table" />
         </div>
 
@@ -94,10 +105,18 @@ const table = useVueTable({
                 <TableBody>
                     <template v-if="table.getRowModel().rows?.length">
                         <template v-for="row in table.getRowModel().rows" :key="row.id">
-                            <TableRow :data-state="row.getIsSelected() ? 'selected' : undefined">
+                            <TableRow class="group relative" :data-state="row.getIsSelected() ? 'selected' : undefined">
                                 <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id">
                                     <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
                                 </TableCell>
+
+                                <DataTableRowOptions
+                                    :row="row"
+                                    @delete="(originalRow) => $emit('delete', originalRow)"
+                                    @duplicate="(originalRow) => $emit('duplicate', originalRow)"
+                                    @edit="(originalRow) => $emit('edit', originalRow)"
+                                    @restore="(originalRow) => $emit('restore', originalRow)"
+                                />
                             </TableRow>
 
                             <TableRow v-if="row.getIsExpanded()">
@@ -108,9 +127,20 @@ const table = useVueTable({
                         </template>
                     </template>
 
+                    <template v-else-if="isDataLoading">
+                        <TableRow>
+                            <TableCell :colspan="columns.length" class="h-24">
+                                <div class="flex flex-col justify-center items-center">
+                                    <LoaderCircle class="animate-spin" />
+                                    Fetching results...
+                                </div>
+                            </TableCell>
+                        </TableRow>
+                    </template>
+
                     <template v-else>
                         <TableRow>
-                            <TableCell :colspan="columns.length" class="h-24 text-center"> No results. </TableCell>
+                            <TableCell :colspan="columns.length" class="h-24 text-center">No results.</TableCell>
                         </TableRow>
                     </template>
                 </TableBody>

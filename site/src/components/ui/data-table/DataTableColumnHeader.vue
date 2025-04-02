@@ -15,6 +15,7 @@ import { ArrowDown, ArrowUp, ArrowUpDown, EyeOff } from "lucide-vue-next"
 defineProps<{
     column: Column<TData, TValue>
     title: string
+    align?: "start" | "center" | "end" | undefined
 }>()
 </script>
 
@@ -36,7 +37,7 @@ export default {
                 </Button>
             </DropdownMenuTrigger>
 
-            <DropdownMenuContent align="start">
+            <DropdownMenuContent :align="align">
                 <DropdownMenuItem @click="column.toggleSorting(false)">
                     <ArrowUp class="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
                     Asc

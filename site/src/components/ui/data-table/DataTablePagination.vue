@@ -9,7 +9,7 @@ defineProps<{ table: Table<TData> }>()
 </script>
 
 <template>
-    <div class="flex items-center justify-between px-2 py-4">
+    <div class="flex items-center justify-between pt-4">
         <div class="flex-1 text-sm text-muted-foreground">
             {{ table.getFilteredSelectedRowModel().rows.length }} of {{ table.getFilteredRowModel().rows.length }} row(s)
             selected.
@@ -19,7 +19,10 @@ defineProps<{ table: Table<TData> }>()
             <div class="flex items-center space-x-2">
                 <p class="text-sm font-medium">Rows per page</p>
 
-                <Select :model-value="`${table.getState().pagination.pageSize}`" @update:model-value="table.setPageSize">
+                <Select
+                    :model-value="`${table.getState().pagination.pageSize}`"
+                    @update:model-value="(v) => table.setPageSize(parseInt(v))"
+                >
                     <SelectTrigger class="h-8 w-[70px]">
                         <SelectValue :placeholder="`${table.getState().pagination.pageSize}`" />
                     </SelectTrigger>
