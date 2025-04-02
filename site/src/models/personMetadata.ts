@@ -1,62 +1,61 @@
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
-import { DataTableDropdown } from "@/components/ui/data-table"
+import { DataTableColumnHeader, DataTableRowSelectorCell, DataTableStrikableCell } from "@/components/ui/data-table"
+import { DataTableRowSelectorColumnHeader } from "@/components/ui/data-table"
+import { mediumDateFormatter } from "@/lib/dateFormatters"
+import { coreSchema } from "@/models/core"
 
+import { parseAbsoluteToLocal } from "@internationalized/date"
 import type { ColumnDef } from "@tanstack/vue-table"
-import { ArrowUpDown } from "lucide-vue-next"
+import * as changeCase from "change-case"
+import { v7 as uuidv7 } from "uuid"
 import { h } from "vue"
+import { z } from "zod"
 
-export type PersonMetadata = {
-    givenName: string
-    familyName: string
-    personId: string
-    createdAt: string
-    createdBy: string
-    deletedAt: string
-    deletedBy: string
+export const schema = z.object({
+    givenName: z.string().trim().min(1, "Required").default(""),
+    familyName: z.string().trim().min(1, "Required").default(""),
+    personId: z.string().uuid().default(uuidv7),
+})
+const mergedSchema = schema.merge(coreSchema)
+export type Type = z.infer<typeof mergedSchema>
+
+export function getInitialValues() {
+    return {
+        givenName: "",
+        familyName: "",
+        personId: uuidv7(),
+    }
 }
 
-export const personMetadataColumns: ColumnDef<PersonMetadata>[] = [
+export const columns: ColumnDef<Type>[] = [
     {
         id: "select",
-        header: ({ table }) =>
-            h(Checkbox, {
-                checked: table.getIsAllPageRowsSelected(),
-                "onUpdate:checked": (value: boolean) => table.toggleAllPageRowsSelected(!!value),
-                ariaLabel: "Select all",
-            }),
-        cell: ({ row }) =>
-            h(Checkbox, {
-                checked: row.getIsSelected(),
-                "onUpdate:checked": (value: boolean) => row.toggleSelected(!!value),
-                ariaLabel: "Select row",
-            }),
-        enableSorting: false,
+        header: ({ table }) => h(DataTableRowSelectorColumnHeader, { table: table }),
+        cell: ({ row }) => h(DataTableRowSelectorCell, { row: row }),
+        enableColumnFilter: false,
         enableHiding: false,
+        enableSorting: false,
     },
     {
         accessorKey: "givenName",
-        header: () => h("div", "First Name"),
-        cell: ({ row }) => h("div", row.getValue("givenName")),
+        id: "givenName",
+        header: ({ column }) => h(DataTableColumnHeader, { column: column, title: changeCase.capitalCase(column.id) }),
+        cell: ({ row }) => h(DataTableStrikableCell, { row: row }, () => row.getValue("givenName")),
     },
     {
         accessorKey: "familyName",
-        header: ({ column }) => {
-            return h(
-                Button,
-                {
-                    variant: "ghost",
-                    onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
-                },
-                () => ["Last Name", h(ArrowUpDown, { class: "ml-2 h-4 w-4" })]
-            )
-        },
-        cell: ({ row }) => h("div", row.getValue("familyName")),
+        id: "familyName",
+        header: ({ column }) => h(DataTableColumnHeader, { column: column, title: changeCase.capitalCase(column.id) }),
+        cell: ({ row }) => h(DataTableStrikableCell, { row: row }, () => row.getValue("familyName")),
     },
     {
-        id: "actions",
-        enableHiding: false,
+        accessorFn: (row) => row.deletedAt || row.createdAt,
+        id: "updatedAt",
+        header: ({ column }) =>
+            h(DataTableColumnHeader, { column: column, title: changeCase.capitalCase(column.id), class: "justify-end" }),
         cell: ({ row }) =>
-            h("div", { class: "relative" }, h(DataTableDropdown, { id: row.original.personId, onExpand: row.toggleExpanded })),
+            h(DataTableStrikableCell, { class: "text-right", row: row }, () =>
+                mediumDateFormatter.format(parseAbsoluteToLocal(row.getValue("updatedAt")).toDate())
+            ),
+        enableColumnFilter: false,
     },
 ]
