@@ -62,7 +62,7 @@ jobs:
           TF_VARS_JSON: ${{ vars.TF_VARS_JSON }}
         run: |
           sudo apt-get install -y jq
-          echo $TF_VARS_JSON | jq -r 'to_entries | .[] | "TF_VAR_\(.key)=\"\(.value)\""' >> $GITHUB_ENV
+          echo $TF_VARS_JSON | jq -r 'to_entries | .[] | "TF_VAR_\(.key)=\(.value)"' >> $GITHUB_ENV
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
         with:
