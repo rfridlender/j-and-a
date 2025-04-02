@@ -1,6 +1,6 @@
 import PrivateLayout from "@/layouts/PrivateLayout.vue"
 import PublicLayout from "@/layouts/PublicLayout.vue"
-import { modelDefinitions } from "@/models"
+import { definitions } from "@/models"
 import { useAuthSession } from "@/stores/authSession"
 import { useUserAttributes } from "@/stores/userAttributes"
 import ConfirmSignInWithEmailCode from "@/views/ConfirmSignInWithEmailCode.vue"
@@ -39,11 +39,11 @@ export const privateRoutes = [
         component: DashboardView,
     },
     {
-        path: "model/:modelType",
+        path: "/model/:modelType",
         name: "Model",
         component: ModelView,
         beforeEnter: (to: RouteLocationNormalized, _: RouteLocationNormalizedLoaded, next: NavigationGuardNext) =>
-            to.params.modelType.toString() in modelDefinitions ? next() : next(false),
+            to.params.modelType.toString() in definitions ? next() : next(false),
     },
 ]
 

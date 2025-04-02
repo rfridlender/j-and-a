@@ -39,7 +39,7 @@ import {
     SidebarRail,
     SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { modelDefinitions } from "@/models"
+import { definitions } from "@/models"
 import { privateRoutes } from "@/router"
 import { useUserAttributes } from "@/stores/userAttributes"
 
@@ -163,10 +163,10 @@ async function onSignOut() {
                     <SidebarGroupLabel>Models</SidebarGroupLabel>
 
                     <SidebarMenu>
-                        <SidebarMenuItem v-for="(modelDefinition, modelType) of modelDefinitions" :key="modelType">
+                        <SidebarMenuItem v-for="(definition, modelType) of definitions" :key="modelType">
                             <SidebarMenuButton as-child>
                                 <RouterLink :to="`/model/${modelType}`">
-                                    <component :is="modelDefinition.icon" />
+                                    <component :is="definition.icon" />
                                     <span>{{ changeCase.capitalCase(modelType) }}</span>
                                 </RouterLink>
                             </SidebarMenuButton>
