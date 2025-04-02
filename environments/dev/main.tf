@@ -17,7 +17,7 @@ provider "aws" {
 }
 
 provider "github" {
-  token = var.GITHUB_TOKEN
+  token = var.FINE_GRAINED_GITHUB_TOKEN
 }
 
 locals {
@@ -33,12 +33,19 @@ resource "github_repository_environment" "repository_environment" {
   environment = local.environment
 }
 
-resource "github_actions_environment_variable" "environment_variables" {
-  for_each      = local.variables
+resource "github_actions_environment_variable" "tf_vars_json_environment_variable" {
   repository    = var.PROJECT_NAME
   environment   = github_repository_environment.repository_environment.environment
-  variable_name = "TF_VAR_${each.key}"
-  value         = each.value
+  variable_name = "TF_VARS_JSON"
+  value         = jsonencode(local.environment_variables)
+}
+
+resource "github_actions_environment_variable" "pipeline_dependent_environment_variables" {
+  for_each      = local.pipeline_dependent_environment_variable_keys
+  repository    = var.PROJECT_NAME
+  environment   = github_repository_environment.repository_environment.environment
+  variable_name = each.value
+  value         = local.environment_variables[each.value]
 }
 
 module "iam_github_oidc_role" {
